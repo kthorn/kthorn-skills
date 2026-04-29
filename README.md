@@ -9,6 +9,7 @@ A collection of Claude Code skills organized as a marketplace with multiple plug
 Systematic literature searching and review toolkit. Search PubMed, screen papers, extract data, traverse citations, and synthesize findings from scientific literature.
 
 **Skills included:**
+
 - `getting-started` - Introduction and setup guide
 - `answering-research-questions` - Main workflow for research queries
 - `searching-literature` - PubMed search integration
@@ -25,8 +26,18 @@ Systematic literature searching and review toolkit. Search PubMed, screen papers
 AI-powered code and document review tools using OpenAI Codex CLI.
 
 **Skills included:**
+
 - `codex-review` - Dispatch Codex CLI for independent review of plans, PRs, and code changes
 - `codex-refine` - Iteratively refine documents through repeated Codex reviews until convergence
+
+### pi-tools
+
+AI-powered code and document review tools using pi-subagents.
+
+**Skills included:**
+
+- `pi-review` - One-off code/design review via the `reviewer` builtin subagent
+- `pi-refine` - Iteratively refine documents through repeated `reviewer` subagent reviews until convergence
 
 ## Installation
 
@@ -57,14 +68,21 @@ git clone https://github.com/kthorn/kthorn-skills.git
 ## Prerequisites
 
 ### Research Superpowers
+
 - PubMed MCP server (for literature search)
 - Semantic Scholar API (free, for citation traversal)
 - Unpaywall API (free, for open access discovery)
 - ChEMBL API (free, optional)
 
 ### Codex Tools
+
 - [OpenAI Codex CLI](https://github.com/openai/codex) installed and configured
 - OpenAI API key
+
+### Pi Tools
+
+- [pi-subagents](https://github.com/mariozechner/pi-subagents) installed and configured
+- Compatible pi coding agent with subagent support
 
 ## License
 
