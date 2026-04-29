@@ -1,6 +1,6 @@
 # kthorn-skills
 
-A collection of Claude Code skills organized as a marketplace with multiple plugins.
+A collection of skills for [pi coding agent](https://github.com/mariozechner/pi-coding-agent) and Claude Code, organized as a marketplace with multiple plugins.
 
 ## Plugins
 
@@ -41,13 +41,21 @@ AI-powered code and document review tools using pi-subagents.
 
 ## Installation
 
-### From the marketplace (recommended)
+### Pi (pi-tools plugin)
+
+```bash
+pi install git:github.com/kthorn/kthorn-skills
+```
+
+This installs the `pi-review` and `pi-refine` skills. Requires [pi-subagents](https://github.com/mariozechner/pi-subagents).
+
+### Claude Code marketplace (all plugins)
 
 ```bash
 claude mcp add-skill-marketplace https://github.com/kthorn/kthorn-skills
 ```
 
-### Install individual plugins
+### Install individual plugins (Claude Code)
 
 ```bash
 # Research superpowers only
@@ -59,7 +67,7 @@ claude plugin add https://github.com/kthorn/kthorn-skills/plugins/codex-tools
 
 ### Manual installation
 
-Clone the repo and add the plugin directories to your Claude Code configuration:
+Clone the repo and add the plugin directories to your configuration:
 
 ```bash
 git clone https://github.com/kthorn/kthorn-skills.git
