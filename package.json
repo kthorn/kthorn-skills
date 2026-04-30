@@ -1,0 +1,9 @@
+{
+  "name": "kthorn-skills",
+  "version": "1.0.0",
+  "description": "A collection of skills for pi coding agent and Claude Code — code review, document refinement, and literature research",
+  "keywords": ["pi-package"],
+  "pi": {
+    "skills": ["./plugins/pi-tools/skills"]
+  }
+}
