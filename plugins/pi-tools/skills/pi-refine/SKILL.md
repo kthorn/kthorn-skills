@@ -64,6 +64,15 @@ For each iteration (max 2× the roster size; 6 with the default 3-model roster):
 
 Send the document to the reviewer agent with fresh context and capture output. Each iteration uses a different model from the roster, cycling through for diverse perspectives.
 
+**`reads` is load-bearing, not optional.** For `plan-reviewer`, the subject
+file **must** be passed via `reads: [filePath]` — `plan-reviewer`'s contract
+is to review the first text document in `reads` and to **stop loudly** if `reads`
+has no text file, rather than guessing which design doc to review. Repos often
+contain more than one design doc (e.g. an engine design alongside a scope
+spec); if `reads` is omitted or unpinned, `plan-reviewer` will silently pick
+the wrong subject and the whole iteration is wasted. Always pin `reads` to the
+refinement subject, every dispatch.
+
 Read the model roster from `.pi/settings.json` if available, otherwise use the default:
 
 ```typescript
