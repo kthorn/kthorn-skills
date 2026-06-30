@@ -33,13 +33,6 @@ in the opencode-go coding roster (coding-performance score in parens; see
 All three run at `thinking: high` (the project default) for plan-review.
 Iteration N uses `roster[(N-1) % roster.length]`; wraps when exhausted.
 
-The previous default roster (`qwen3.6-plus`, `kimi-k2.6`) is retired — both
-are marked `usable=no` in the roster CSV (coding score ≤ 55, worse than the
-cheap `deepseek-v4-flash`). If you have overridden `piRefine.modelRoster` in
-`.pi/settings.json`, **audit your entries against the `usable=yes` rows** of
-`docs/opencode-go-model-roster.csv` — at least one previously-listed default
-is now flagged unusable.
-
 **Overriding the roster** — To use different models, set a `piRefine.modelRoster`
 array in `.pi/settings.json`:
 
@@ -56,12 +49,7 @@ array in `.pi/settings.json`:
 ```
 
 If no roster is configured, the default above is used. 2-4 models is recommended;
-more than 4 usually brings diminishing returns. Verify any custom entry against
-`docs/opencode-go-model-roster.csv` — pin only rows with `usable=yes` and a
-coding score ≥ 56, and prefer canonical `opencode-go/<model>` form (the bare id
-(e.g. `kimi-k2.7-code`) is ambiguous: it is registered under moonshotai,
-opencode-go, cloudflare and others, and the resolver rejects ambiguous bare-id
-matches).
+more than 4 usually brings diminishing returns. 
 
 ## When to Use
 
