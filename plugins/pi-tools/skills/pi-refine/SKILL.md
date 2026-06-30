@@ -20,31 +20,48 @@ Iteratively refine a document through repeated `reviewer` subagent reviews until
 
 Pi-refine cycles through a roster of reviewer models so each iteration gets a fresh perspective. Different models catch different issues — one may spot architectural gaps another overlooks, while another may catch logic errors the first missed.
 
-**Default roster** (used unless overridden):
+**Default roster** (used unless overridden) — chosen from the strongest *usable* models
+in the opencode-go coding roster (coding-performance score in parens; see
+`docs/opencode-go-model-roster.csv` in the host repo for the full table):
 
-| Order | Model ID                      | Strengths                                                                   |
-| ----- | ----------------------------- | --------------------------------------------------------------------------- |
-| 1     | `opencode-go/deepseek-v4-pro` | Broad codebase reasoning, catches missing edge cases and architectural gaps |
-| 2     | `opencode-go/qwen3.6-plus`    | Strong at logic errors, contradictions, and ordering problems               |
-| 3     | `opencode-go/kimi-k2.6`       | Detail-oriented, catches API/interface mismatches and dependency gaps       |
+| Order | Model ID                      | Score | Strengths                                                                |
+| ----- | ----------------------------- | ----: | ------------------------------------------------------------------------ |
+| 1     | `opencode-go/glm-5.2`         | 69    | Strongest overall; design judgment, architectural gaps, contradictions   |
+| 2     | `opencode-go/kimi-k2.7-code`  | 61    | API/interface mismatches, dependency gaps, detail-oriented              |
+| 3     | `opencode-go/deepseek-v4-pro` | 59    | Broad codebase reasoning, missing edge cases; high coverage (3.4k/5h)    |
 
-On each iteration, the skill picks the next model in the roster: iteration 1 uses #1, iteration 2 uses #2, etc. When the roster is exhausted, it wraps back to the start.
+All three run at `thinking: high` (the project default) for plan-review.
+Iteration N uses `roster[(N-1) % roster.length]`; wraps when exhausted.
 
-**Overriding the roster** — To use different models, set a `piRefine.modelRoster` array in `.pi/settings.json`:
+The previous default roster (`qwen3.6-plus`, `kimi-k2.6`) is retired — both
+are marked `usable=no` in the roster CSV (coding score ≤ 55, worse than the
+cheap `deepseek-v4-flash`). If you have overridden `piRefine.modelRoster` in
+`.pi/settings.json`, **audit your entries against the `usable=yes` rows** of
+`docs/opencode-go-model-roster.csv` — at least one previously-listed default
+is now flagged unusable.
+
+**Overriding the roster** — To use different models, set a `piRefine.modelRoster`
+array in `.pi/settings.json`:
 
 ```json
 {
   "piRefine": {
     "modelRoster": [
-      "opencode-go/deepseek-v4-pro",
-      "opencode-go/qwen3.6-plus",
-      "anthropic/claude-sonnet-4-6"
+      "opencode-go/glm-5.2",
+      "opencode-go/kimi-k2.7-code",
+      "opencode-go/deepseek-v4-pro"
     ]
   }
 }
 ```
 
-If no roster is configured, the default above is used. 2-4 models is recommended; more than 4 usually brings diminishing returns.
+If no roster is configured, the default above is used. 2-4 models is recommended;
+more than 4 usually brings diminishing returns. Verify any custom entry against
+`docs/opencode-go-model-roster.csv` — pin only rows with `usable=yes` and a
+coding score ≥ 56, and prefer canonical `opencode-go/<model>` form (the bare id
+(e.g. `kimi-k2.7-code`) is ambiguous: it is registered under moonshotai,
+opencode-go, cloudflare and others, and the resolver rejects ambiguous bare-id
+matches).
 
 ## When to Use
 
@@ -64,58 +81,72 @@ For each iteration (max 2× the roster size; 6 with the default 3-model roster):
 
 Send the document to the reviewer agent with fresh context and capture output. Each iteration uses a different model from the roster, cycling through for diverse perspectives.
 
-**`reads` is load-bearing, not optional.** For `plan-reviewer`, the subject
-file **must** be passed via `reads: [filePath]` — `plan-reviewer`'s contract
-is to review the first text document in `reads` and to **stop loudly** if `reads`
-has no text file, rather than guessing which design doc to review. Repos often
-contain more than one design doc (e.g. an engine design alongside a scope
-spec); if `reads` is omitted or unpinned, `plan-reviewer` will silently pick
-the wrong subject and the whole iteration is wasted. Always pin `reads` to the
-refinement subject, every dispatch.
+**`reads`, `task`, and `output` are all load-bearing — populate every one on
+every dispatch.** The dispatch tool takes these as JSON keyword arguments; the
+call below is literal (not pseudocode).
 
-Read the model roster from `.pi/settings.json` if available, otherwise use the default:
+- `reads: [filePath]` — `plan-reviewer`'s contract is to review the first text
+  document in `reads` and **stop loudly** if `reads` has none, rather than
+  guessing which design doc to review. Repos often contain more than one design
+  doc; if `reads` is omitted or unpinned, `plan-reviewer` will fall back to
+  codebase search, pick the wrong subject (often the root engine design), and
+  the whole iteration is wasted. **Always pin `reads` to the refinement subject.**
+- `task: <string>` — the review instructions. If `task` is empty the run has no
+  prompt; the reviewer will report "no subject document provided" even if
+  `reads` is set, because the dispatch was malformed.
+- `output: <path>` — distinct file per iteration (`/tmp/pi-refine-iter-N.md`)
+  so you can reference earlier reviews and write the summary.
+- `model: <canonical-id>` — canonical `opencode-go/<model>` form. The bare id
+  (e.g. `kimi-k2.7-code`) is ambiguous across providers and the resolver
+  rejects ambiguous bare-id matches.
+
+Read the model roster from `.pi/settings.json` if available, otherwise use the
+default above:
 
 ```typescript
 const modelRoster = settings.piRefine?.modelRoster || [
+  "opencode-go/glm-5.2",
+  "opencode-go/kimi-k2.7-code",
   "opencode-go/deepseek-v4-pro",
-  "opencode-go/qwen3.6-plus",
-  "opencode-go/kimi-k2.6",
 ];
-const model = modelRoster[iteration % modelRoster.length];
+const model = modelRoster[(iteration - 1) % modelRoster.length];
 ```
 
-**For implementation plans / design docs (use `plan-reviewer`):**
+**For implementation plans / design docs (use `plan-reviewer`) — LITERAL dispatch:**
 
 ```typescript
 subagent({
   agent: "plan-reviewer",
   model: model,
-  task: `Review this implementation plan against the actual codebase.
+  task: `Review the design spec pinned in reads against the actual codebase.
 
-Cross-reference every file, module, function, API, and config reference in the plan
+Cross-reference every file, module, function, API, and config reference in the spec
 against the codebase. Verify claims by inspecting actual code.
 
 Check:
 1. File/module references — do they exist? Are they the right places?
-2. Architecture alignment — does the plan follow existing patterns?
+2. Architecture alignment — does the spec follow existing patterns?
 3. API/interface compatibility — do function signatures, class constructors match?
 4. Dependency gaps — missing imports, unavailable services, wrong config keys?
-5. Data flow consistency — does the plan's data pipeline match actual schemas?
+5. Data flow consistency — does the spec's data pipeline match actual schemas?
 6. Feasibility — any hard blockers?
 7. Missing edge cases — what does existing error handling reveal?
-8. Test coverage gaps — would this break existing tests?`,
+8. Test coverage gaps — would this break existing tests? Would the spec's data-count assertions hold?
+
+Organize findings by severity: critical, important, minor. Every finding must cite
+a specific file path and line number from the codebase.`,
   reads: [filePath],
   output: `/tmp/pi-refine-iter-${iteration}.md`,
-});
+}),
 ```
 
-**For general documents (use `reviewer`):**
+**For general documents (use `reviewer`) — LITERAL dispatch:**
 
 ```typescript
 subagent({
   agent: "reviewer",
   model: model,
-  task: `Below is the full text of a document to review. Review ONLY this text.
+  task: `Review ONLY the document pinned in reads.
 
 Identify:
 1. Gaps, missing steps, or incorrect assumptions
@@ -126,10 +157,11 @@ Identify:
 Reference section/task/step numbers from the document. Organize by severity: critical, important, minor.`,
   reads: [filePath],
   output: `/tmp/pi-refine-iter-${iteration}.md`,
-});
+}),
 ```
 
-Then read `/tmp/pi-refine-iter-${iteration}.md`. Record which model produced this review for the summary report.
+Then read `/tmp/pi-refine-iter-${iteration}.md`. Record which model produced
+this review for the summary report.
 
 ### Step 2: Triage Findings
 
@@ -242,7 +274,7 @@ For each iteration, list every finding with its disposition:
 - If `plan-reviewer` doesn't exist in the project (e.g., working on a different codebase), create it first: write a `.pi/agents/plan-reviewer.md` file following the template at [the plan-reviewer agent definition].
 - **Convergence posture: filter noise, fix substance.** Reviewers will always find _something_ to say — that's what they're designed to do. Your job is to distinguish between findings that would cause someone to build the wrong thing and findings that are just a reviewer being thorough. Converge when no important findings remain — not because you're tired of iterating. The acid test for every finding: "Would someone following this spec build the wrong thing?" If no, it's noise; if yes or you're unsure, fix it.
 - The iteration cap (2× roster size) is a safety net. Most docs should converge in 2-4 iterations even with model cycling. If the full roster has seen the current version and is producing only language polish, converge immediately — do not wait for the cap.
-- **Model cycling purpose:** Each model brings different blind spots. DeepSeek V4 Pro excels at broad architecture reasoning; Qwen3.6 Plus catches logic and ordering issues; Kimi K2.6 spots API/interface mismatches. Cycling through them catches more issues than re-running the same model. But once all models have seen your doc and found nothing substantive, you're done — additional cycles are waste.
+- **Model cycling purpose:** Each model brings different blind spots. GLM-5.2 (score 69) carries the design-judgment load; Kimi K2.7 Code (61) catches API/interface mismatches and dependency gaps; DeepSeek V4 Pro (59) brings broad codebase reasoning and a high request quota (3.4k/5h) for high-coverage passes. Cycling through them catches more issues than re-running the same model. But once all models have seen your doc and found nothing substantive, you're done — additional cycles are waste.
 - If a model in the roster is unavailable (rate-limited, down), skip it this cycle and try it on the next wrap-around rather than blocking.
 - This skill is for document refinement. For one-off code or document review, use `pi-review` directly.
 - **Security/privacy/auth findings are always worth fixing** — even for internal tools, these protect against insider threats and accidental data exposure.
