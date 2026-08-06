@@ -39,15 +39,23 @@ AI-powered code and document review tools using pi-subagents.
 - `pi-review` - One-off code/design review via the `reviewer` builtin subagent
 - `pi-refine` - Iteratively refine documents through repeated `reviewer` subagent reviews until convergence
 
+### wslopen-tools
+
+Safe WSL-to-Windows directory/file links plus one shared link-authoring skill. See [its README](plugins/wslopen-tools/README.md) for the explicit Windows-side handler installation.
+
+**Skills included:**
+
+- `using-wslopen` - Emit configured `wslopen://` Markdown links for supported WSL paths
+
 ## Installation
 
-### Pi (pi-tools plugin)
+### Pi skills
 
 ```bash
 pi install git:github.com/kthorn/kthorn-skills
 ```
 
-This installs the `pi-review` and `pi-refine` skills. Requires [pi-subagents](https://github.com/mariozechner/pi-subagents).
+This installs `pi-review`, `pi-refine`, and `using-wslopen`. `pi-review` and `pi-refine` require [pi-subagents](https://github.com/mariozechner/pi-subagents); `using-wslopen` also needs the Windows handler described in its [plugin README](plugins/wslopen-tools/README.md).
 
 ### Claude Code marketplace (all plugins)
 
@@ -63,6 +71,9 @@ claude plugin add https://github.com/kthorn/kthorn-skills/plugins/research-super
 
 # Codex tools only
 claude plugin add https://github.com/kthorn/kthorn-skills/plugins/codex-tools
+
+# Wslopen tools only
+claude plugin add https://github.com/kthorn/kthorn-skills/plugins/wslopen-tools
 ```
 
 ### Manual installation
@@ -91,6 +102,11 @@ git clone https://github.com/kthorn/kthorn-skills.git
 
 - [pi-subagents](https://github.com/mariozechner/pi-subagents) installed and configured
 - Compatible pi coding agent with subagent support
+
+### Wslopen Tools
+
+- Windows with WSL and an explicit configured `/home/<user>` root
+- The per-user handler installed from [plugins/wslopen-tools](plugins/wslopen-tools/README.md)
 
 ## License
 
