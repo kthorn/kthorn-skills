@@ -4,6 +4,6 @@
   "description": "A collection of skills for pi coding agent and Claude Code — code review, document refinement, and literature research",
   "keywords": ["pi-package"],
   "pi": {
-    "skills": ["./plugins/pi-tools/skills"]
+    "skills": ["./plugins/pi-tools/skills", "./plugins/wslopen-tools/skills"]
   }
 }

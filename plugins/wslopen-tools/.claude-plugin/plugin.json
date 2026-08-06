@@ -1,0 +1,8 @@
+{
+  "name": "wslopen-tools",
+  "description": "Safe WSL-to-Windows file links and authoring guidance.",
+  "version": "1.0.0",
+  "author": {
+    "name": "kthorn"
+  }
+}

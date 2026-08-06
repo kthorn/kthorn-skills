@@ -13,6 +13,11 @@
       "name": "codex-tools",
       "source": "plugins/codex-tools",
       "description": "AI-powered code and document review tools. Dispatch OpenAI Codex CLI for independent plan reviews, PR reviews, and iterative document refinement."
+    },
+    {
+      "name": "wslopen-tools",
+      "source": "plugins/wslopen-tools",
+      "description": "Safe WSL-to-Windows file links and authoring guidance."
     }
   ]
 }
