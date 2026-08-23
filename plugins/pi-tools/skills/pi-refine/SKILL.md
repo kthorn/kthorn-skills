@@ -68,19 +68,32 @@ cursor makes later specs begin after the last review call, not always with Kimi.
 state_dir="$HOME/.pi/agent/state"
 state_file="$state_dir/pi-refine-roster-index"
 lock_file="$state_dir/pi-refine-roster-index.lock"
-mkdir -p "$state_dir"
+if ! mkdir -p "$state_dir"; then
+  printf 'PI_REFINE_ROSTER_PAUSED cannot-create-state-dir=%s\n' "$state_dir" >&2
+  exit 1
+fi
 
-slot="$(flock "$lock_file" bash -c '
+if ! slot="$(flock "$lock_file" bash -c '
+  set -euo pipefail
   state=$1
-  index=$(cat "$state" 2>/dev/null || printf 0)
-  case "$index" in 0|1|2|3) ;; *) exit 2 ;; esac
+  if [ -e "$state" ] || [ -L "$state" ]; then
+    [ -f "$state" ] || { printf "invalid-cursor=%s\n" "$state" >&2; exit 1; }
+    index=$(cat "$state")
+  else
+    index=0
+  fi
+  case "$index" in 0|1|2|3) ;; *) printf "invalid-cursor-value=%s\n" "$index" >&2; exit 1 ;; esac
   printf "%s\n" "$(( (index + 1) % 4 ))" >"$state"
   printf "%s\n" "$index"
-' _ "$state_file")"
+' _ "$state_file")"; then
+  printf 'PI_REFINE_ROSTER_PAUSED cursor=%s\n' "$state_file" >&2
+  exit 1
+fi
+
 ```
 
-A malformed cursor fails loudly; do not reset it. A missing cursor begins at
-slot `0`.
+A missing cursor begins at slot `0`. An unreadable, non-regular, malformed, or
+unwritable cursor fails loudly; never reset it.
 
 ## Review Dispatch
 

@@ -31,12 +31,41 @@ for required in \
 done
 
 log_file="$(mktemp)"
-trap 'rm -f "$log_file"' EXIT
+cursor_snippet="$(mktemp)"
+cursor_home="$(mktemp -d)"
+trap 'rm -f "$log_file" "$cursor_snippet"; rm -rf "$cursor_home"' EXIT
 printf 'Start with exactly one line: RESULT: clean or RESULT: findings.\n' >"$log_file"
 ! grep -Eq '^RESULT: (clean|findings)$' "$log_file"
 printf 'RESULT: findings\n' >>"$log_file"
 result="$(grep -E '^RESULT: (clean|findings)$' "$log_file" | tail -n1)"
 test "$result" = 'RESULT: findings'
+
+awk '
+  /^## Round-Robin Claim$/ { section = 1; next }
+  section && /^```bash$/ { code = 1; next }
+  code && /^```$/ { exit }
+  code { print }
+' "$skill" >"$cursor_snippet"
+printf 'printf "%%s\\n" "$slot"\n' >>"$cursor_snippet"
+cursor_output="$(HOME="$cursor_home" bash "$cursor_snippet")"
+test "$cursor_output" = 0
+state_file="$cursor_home/.pi/agent/state/pi-refine-roster-index"
+test "$(cat "$state_file")" = 1
+printf '0\n' >"$state_file"
+chmod 400 "$state_file"
+if HOME="$cursor_home" bash "$cursor_snippet" >/dev/null 2>"$log_file"; then
+  echo 'unwritable cursor state unexpectedly succeeded' >&2
+  exit 1
+fi
+grep -Fq 'PI_REFINE_ROSTER_PAUSED' "$log_file"
+chmod 600 "$state_file"
+rm "$state_file"
+mkdir "$state_file"
+if HOME="$cursor_home" bash "$cursor_snippet" >/dev/null 2>"$log_file"; then
+  echo 'directory cursor state unexpectedly succeeded' >&2
+  exit 1
+fi
+grep -Fq 'PI_REFINE_ROSTER_PAUSED' "$log_file"
 
 pause_line="$(grep -n -F 'if [ "$status" != idle ]; then' "$skill" | head -n1 | cut -d: -f1)"
 logs_line="$(grep -n -F 'paseo logs "$agent_id"' "$skill" | head -n1 | cut -d: -f1)"
