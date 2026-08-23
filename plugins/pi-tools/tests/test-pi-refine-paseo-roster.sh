@@ -7,7 +7,9 @@ skill="$repo_root/plugins/pi-tools/skills/pi-refine/SKILL.md"
 for required in \
   '"runner": "paseo"' \
   'For a general document, use `reviewer`' \
+  'For a general document, do not run native-model or Paseo preflight.' \
   'Do not start a Paseo job for this path.' \
+  'return a manual general-document review to its caller.' \
   'paseo provider models claude --thinking' \
   'require a `claude-opus-5` row that' \
   'lists `high`' \
@@ -22,6 +24,8 @@ for required in \
   'flock' \
   'Start with exactly one line: RESULT: clean or RESULT: findings.' \
   "grep -E '^RESULT: (clean|findings)\$'" \
+  'A Paseo review is clean only when it explicitly says `RESULT: clean`' \
+  'A Pi or manual-general-document review is clean when its output has no substantive finding.' \
   'eight dispatches'; do
   grep -Fq -- "$required" "$skill"
 done

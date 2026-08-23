@@ -13,7 +13,7 @@ implementation-plan review is intentionally out of scope.
 
 ## Required Review Roster
 
-Read this required configuration from `~/.pi/agent/settings.json`:
+For a codebase-grounded design spec, read this required configuration from `~/.pi/agent/settings.json`:
 
 ```json
 {
@@ -34,16 +34,16 @@ Read this required configuration from `~/.pi/agent/settings.json`:
 }
 ```
 
-All four objects, in this order, are required. A missing or unknown `runner`,
-model, thinking value, provider, or mode is a dispatch failure. Never invent a
-model, thinking level, fallback, or replacement reviewer.
+All four objects, in this order, are required for a codebase-grounded design
+spec. A missing or unknown `runner`, model, thinking value, provider, or mode
+is a dispatch failure. Never invent a model, thinking level, fallback, or
+replacement reviewer.
 
-Before the first dispatch, verify native IDs against Pi's loaded registry. For
-the Paseo entry, run `paseo provider diagnostic claude`, then
-`paseo provider models claude --thinking`; require a `claude-opus-5` row that
-lists `high`. Authentication, quota, model-resolution, permission, timeout, or
-execution failures pause refinement and are reported to the user; they are
-never clean and never skipped.
+Before a codebase-grounded design-spec dispatch, verify native IDs against Pi's
+loaded registry. For the Paseo entry, run `paseo provider diagnostic claude`,
+then `paseo provider models claude --thinking`; require a `claude-opus-5` row that lists `high`. Authentication, quota, model-resolution, permission,
+timeout, or execution failures pause refinement and are reported to the user;
+they are never clean and never skipped.
 
 ## Subject Contract
 
@@ -55,9 +55,8 @@ codebase. Do not let either reviewer guess the subject.
 ## General Documents
 
 For a general document, use `reviewer` with the pinned document and a text-only
-review task. Do not use `plan-reviewer`, claim a design-spec roster slot, or
-inspect a repository. Do not start a Paseo job for this path. This remains a
-manual pi-refine capability; no automatic caller dispatches it.
+review task. For a general document, do not run native-model or Paseo preflight.
+Do not use `plan-reviewer`, claim a design-spec roster slot, or inspect a repository. Do not start a Paseo job for this path. This remains a manual pi-refine capability; no automatic caller dispatches it.
 
 ## Round-Robin Claim
 
@@ -168,11 +167,11 @@ Classify every finding:
 - **Ignore:** hallucination, duplicate already fixed issue, formatting nit,
   bikeshed, or unjustified scale-only/over-engineered suggestion.
 
-A review is clean only when it explicitly says `RESULT: clean` **and** has no
-substantive finding. A clean codebase-grounded design-spec review immediately
-converges the pass; do not call the remaining roster entries. After a
-substantive design-spec edit, claim the next slot and review again. Do not
-require a full roster pass.
+A Paseo review is clean only when it explicitly says `RESULT: clean` **and** has no substantive finding. A Pi or manual-general-document review is clean when its output has no substantive finding. Treat Critical and Important findings as substantive; Minor-only output is clean.
+
+A clean codebase-grounded design-spec review immediately converges the pass; do
+not call the remaining roster entries. After a substantive design-spec edit,
+claim the next slot and review again. Do not require a full roster pass.
 
 For a manual general document, use the same triage rules and re-dispatch
 `reviewer` after a substantive edit; no Paseo or design-spec roster applies.
@@ -186,4 +185,4 @@ pass.
 On convergence, add or update `**Status:** Refined` near the document title.
 Report each dispatched route, model, thinking level, Paseo agent ID when used,
 all findings and dispositions, the number of dispatches, and whether it
-converged. Return control to `brainstorming` for the final user-approval gate.
+converged. Return a codebase-grounded design-spec review to `brainstorming` for the final user-approval gate; return a manual general-document review to its caller.
