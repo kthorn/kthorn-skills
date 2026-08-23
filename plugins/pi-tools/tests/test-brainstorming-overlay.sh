@@ -13,6 +13,7 @@ grep -Fq 'Do not ask for final spec approval or invoke `writing-plans` until ref
 
 sandbox="$(mktemp -d)"
 trap 'rm -rf "$sandbox"' EXIT
+# --no-skills excludes ambient skills; explicit -e package resources still load.
 output="$(cd "$sandbox" && pi --no-session --no-context-files --no-skills \
   -e "$repo_root" \
   -e "$upstream_package" \
