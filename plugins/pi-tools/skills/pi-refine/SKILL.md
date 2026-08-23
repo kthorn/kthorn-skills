@@ -106,13 +106,27 @@ general-document review uses `reviewer` directly and never enters this route.
 
 ### Pi route
 
-For `runner: "pi"`, dispatch `plan-reviewer` with the route's exact model and
-thinking level, a nonempty codebase-grounded review task, the pinned `reads`
-subject, and a unique `mktemp` output file.
+For `runner: "pi"`, dispatch the packaged `plan-reviewer` with a nonempty
+codebase-grounded review task, the pinned `reads` subject, and a unique
+`mktemp` output file. Pass the route's model and thinking together as a
+thinking-suffixed model string; for example:
 
-The task must require file-and-line citations and these checks: file/module
-references, architecture alignment, API compatibility, dependencies, data flow,
-feasibility, edge cases, and test coverage.
+```javascript
+subagent({
+  agent: "plan-reviewer",
+  model: "${route_model}:${route_thinking}",
+  reads: [absolute_spec_path],
+  task: review_task,
+  output: review_output
+})
+```
+
+The suffix is mandatory for every native route, including
+`opencode-go/grok-4.5:high`; do not rely on the agent definition's default
+thinking level. Treat a missing or different reported model/thinking level as a
+dispatch failure. The task must require file-and-line citations and these
+checks: file/module references, architecture alignment, API compatibility,
+dependencies, data flow, feasibility, edge cases, and test coverage.
 
 ### Paseo route
 
@@ -157,12 +171,13 @@ if [ "$status" != idle ]; then
   exit 1
 fi
 paseo logs "$agent_id" --tail 200 >"$output_file"
-result="$(grep -E '^RESULT: (clean|findings)$' "$output_file" | tail -n1 || true)"
-if [ -z "$result" ]; then
-  printf 'PASEO_REVIEW_PAUSED agent=%s workspace=%s missing-result-marker\n' \
-    "$agent_id" "$workspace_id" >&2
+marker_count="$(grep -Ec '^RESULT: (clean|findings)$' "$output_file" || true)"
+if [ "$marker_count" -ne 1 ]; then
+  printf 'PASEO_REVIEW_PAUSED agent=%s workspace=%s invalid-result-marker-count=%s\n' \
+    "$agent_id" "$workspace_id" "$marker_count" >&2
   exit 1
 fi
+result="$(grep -E '^RESULT: (clean|findings)$' "$output_file")"
 ```
 
 The 900-second wait bound turns a hung job into a timeout pause rather than an
@@ -183,7 +198,7 @@ Classify every finding:
 - **Ignore:** hallucination, duplicate already fixed issue, formatting nit,
   bikeshed, or unjustified scale-only/over-engineered suggestion.
 
-A Paseo review is clean only when it explicitly says `RESULT: clean` **and** has no substantive finding. A Pi or manual-general-document review is clean when its output has no substantive finding. Treat Critical and Important findings as substantive; Minor-only output is clean.
+A Paseo review is clean only when it has exactly one `RESULT: clean` marker **and** has no substantive finding. A missing, duplicated, or conflicting marker pauses the pass. A Pi or manual-general-document review is clean when its output has no substantive finding. Treat Critical and Important findings as substantive; Minor-only output is clean.
 
 A clean codebase-grounded design-spec review immediately converges the pass; do
 not call the remaining roster entries. After a substantive design-spec edit,

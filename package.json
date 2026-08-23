@@ -5,5 +5,8 @@
   "keywords": ["pi-package"],
   "pi": {
     "skills": ["./plugins/pi-tools/skills", "./plugins/wslopen-tools/skills"]
+  },
+  "pi-subagents": {
+    "agents": ["./agents"]
   }
 }
