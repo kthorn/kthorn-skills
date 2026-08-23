@@ -92,9 +92,12 @@ feasibility, edge cases, and test coverage.
 
 ### Paseo route
 
-For `runner: "paseo"`, create a separate native-provider job. Use a unique
-prompt file and output file; do not add a wrapper, extension, dependency, or
-`--output-schema` (Paseo forbids it with `--background`).
+For `runner: "paseo"`, create a separate native-provider job in a local
+Paseo workspace for `repository_root`. Do not rely on `--cwd`: an ambient
+`PASEO_AGENT_ID` can select the caller workspace instead. Reuse a workspace with
+the exact repository path or create one, then pass its explicit ID to the job.
+Use a unique prompt file and output file; do not add a wrapper, extension,
+dependency, or `--output-schema` (Paseo forbids it with `--background`).
 
 ```bash
 prompt_file="$(mktemp)"
@@ -109,9 +112,16 @@ Start with exactly one line: RESULT: clean or RESULT: findings.
 Then use the plan-reviewer headings: Critical, Important, Minor, Codebase Context, Verified.
 EOF
 
+workspace_id="$(paseo workspace ls --json | jq -r --arg cwd "$repository_root" \
+  'first(.[] | select(.cwd == $cwd) | .workspaceId) // empty')"
+if [ -z "$workspace_id" ]; then
+  workspace_id="$(paseo workspace create --isolation local --path "$repository_root" \
+    --title 'Pi spec review' --json | jq -er '.workspaceId')"
+fi
+
 run_json="$(paseo run --background --json \
-  --provider claude --model claude-opus-5 --thinking high --mode plan \
-  --cwd "$repository_root" "$(<"$prompt_file")")"
+  --workspace "$workspace_id" --provider claude --model claude-opus-5 \
+  --thinking high --mode plan "$(<"$prompt_file")")"
 agent_id="$(jq -er '.agentId' <<<"$run_json")"
 wait_json="$(paseo wait --json "$agent_id")"
 test "$(jq -er '.status' <<<"$wait_json")" = idle
@@ -119,9 +129,9 @@ paseo logs "$agent_id" --tail 200 >"$output_file"
 grep -Eq 'RESULT: (clean|findings)' "$output_file"
 ```
 
-Record `agent_id` and the output path in the refinement summary. A non-idle
-wait, missing result marker, or failed command pauses the pass and surfaces the
-Paseo ID and diagnostic output to the user.
+Record `workspace_id`, `agent_id`, and the output path in the refinement
+summary. A non-idle wait, missing result marker, or failed command pauses the
+pass and surfaces the Paseo IDs and diagnostic output to the user.
 
 ## Triage and Convergence
 
