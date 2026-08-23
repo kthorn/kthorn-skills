@@ -101,6 +101,8 @@ Use a unique prompt file and output file; do not add a wrapper, extension,
 dependency, or `--output-schema` (Paseo forbids it with `--background`).
 
 ```bash
+set -euo pipefail
+
 prompt_file="$(mktemp)"
 output_file="$(mktemp)"
 trap 'rm -f "$prompt_file"' EXIT
@@ -125,10 +127,19 @@ run_json="$(paseo run --background --json \
   --thinking high --mode plan "$(<"$prompt_file")")"
 agent_id="$(jq -er '.agentId' <<<"$run_json")"
 wait_json="$(paseo wait --json --timeout 900 "$agent_id")"
-test "$(jq -er '.status' <<<"$wait_json")" = idle
+status="$(jq -er '.status' <<<"$wait_json")"
+if [ "$status" != idle ]; then
+  printf 'PASEO_REVIEW_PAUSED agent=%s workspace=%s status=%s\n' \
+    "$agent_id" "$workspace_id" "$status" >&2
+  exit 1
+fi
 paseo logs "$agent_id" --tail 200 >"$output_file"
-result="$(grep -E '^RESULT: (clean|findings)$' "$output_file" | tail -n1)"
-test -n "$result"
+result="$(grep -E '^RESULT: (clean|findings)$' "$output_file" | tail -n1 || true)"
+if [ -z "$result" ]; then
+  printf 'PASEO_REVIEW_PAUSED agent=%s workspace=%s missing-result-marker\n' \
+    "$agent_id" "$workspace_id" >&2
+  exit 1
+fi
 ```
 
 The 900-second wait bound turns a hung job into a timeout pause rather than an
