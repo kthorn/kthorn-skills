@@ -77,7 +77,10 @@ if ! slot="$(flock "$lock_file" bash -c '
   set -euo pipefail
   state=$1
   if [ -e "$state" ] || [ -L "$state" ]; then
-    [ -f "$state" ] || { printf "invalid-cursor=%s\n" "$state" >&2; exit 1; }
+    if [ -L "$state" ] || ! [ -f "$state" ]; then
+      printf "invalid-cursor=%s\n" "$state" >&2
+      exit 1
+    fi
     index=$(cat "$state")
   else
     index=0

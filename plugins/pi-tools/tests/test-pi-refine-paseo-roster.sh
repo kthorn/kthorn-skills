@@ -66,6 +66,15 @@ if HOME="$cursor_home" bash "$cursor_snippet" >/dev/null 2>"$log_file"; then
   exit 1
 fi
 grep -Fq 'PI_REFINE_ROSTER_PAUSED' "$log_file"
+rmdir "$state_file"
+target_cursor="$cursor_home/target-cursor"
+printf '0\n' >"$target_cursor"
+ln -s "$target_cursor" "$state_file"
+if HOME="$cursor_home" bash "$cursor_snippet" >/dev/null 2>"$log_file"; then
+  echo 'symlink cursor state unexpectedly succeeded' >&2
+  exit 1
+fi
+grep -Fq 'PI_REFINE_ROSTER_PAUSED' "$log_file"
 
 pause_line="$(grep -n -F 'if [ "$status" != idle ]; then' "$skill" | head -n1 | cut -d: -f1)"
 logs_line="$(grep -n -F 'paseo logs "$agent_id"' "$skill" | head -n1 | cut -d: -f1)"
