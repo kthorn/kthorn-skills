@@ -35,5 +35,8 @@ test "$result" = 'RESULT: findings'
 pause_line="$(grep -n -F 'if [ "$status" != idle ]; then' "$skill" | head -n1 | cut -d: -f1)"
 logs_line="$(grep -n -F 'paseo logs "$agent_id"' "$skill" | head -n1 | cut -d: -f1)"
 test "$pause_line" -lt "$logs_line"
+non_idle_block="$(sed -n "${pause_line},$((logs_line - 1))p" "$skill")"
+grep -Fq 'PASEO_REVIEW_PAUSED agent=%s workspace=%s status=%s' <<<"$non_idle_block"
+grep -Fq 'exit 1' <<<"$non_idle_block"
 
 ! grep -Fq 'skip it this cycle' "$skill"
