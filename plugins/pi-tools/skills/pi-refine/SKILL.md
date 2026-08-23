@@ -39,10 +39,11 @@ model, thinking value, provider, or mode is a dispatch failure. Never invent a
 model, thinking level, fallback, or replacement reviewer.
 
 Before the first dispatch, verify native IDs against Pi's loaded registry. For
-the Paseo entry, run `paseo provider diagnostic claude` and verify
-`claude-opus-5` is available. Authentication, quota, model-resolution,
-permission, timeout, or execution failures pause refinement and are reported to
-the user; they are never clean and never skipped.
+the Paseo entry, run `paseo provider diagnostic claude`, then
+`paseo provider models claude --thinking`; require a `claude-opus-5` row that
+lists `high`. Authentication, quota, model-resolution, permission, timeout, or
+execution failures pause refinement and are reported to the user; they are
+never clean and never skipped.
 
 ## Subject Contract
 
@@ -123,15 +124,17 @@ run_json="$(paseo run --background --json \
   --workspace "$workspace_id" --provider claude --model claude-opus-5 \
   --thinking high --mode plan "$(<"$prompt_file")")"
 agent_id="$(jq -er '.agentId' <<<"$run_json")"
-wait_json="$(paseo wait --json "$agent_id")"
+wait_json="$(paseo wait --json --timeout 900 "$agent_id")"
 test "$(jq -er '.status' <<<"$wait_json")" = idle
 paseo logs "$agent_id" --tail 200 >"$output_file"
-grep -Eq 'RESULT: (clean|findings)' "$output_file"
+result="$(grep -E '^RESULT: (clean|findings)$' "$output_file" | tail -n1)"
+test -n "$result"
 ```
 
-Record `workspace_id`, `agent_id`, and the output path in the refinement
-summary. A non-idle wait, missing result marker, or failed command pauses the
-pass and surfaces the Paseo IDs and diagnostic output to the user.
+The 900-second wait bound turns a hung job into a timeout pause rather than an
+indefinite block. Record `workspace_id`, `agent_id`, and the output path in the
+refinement summary. A non-idle wait, missing result marker, or failed command
+pauses the pass and surfaces the Paseo IDs and diagnostic output to the user.
 
 ## Triage and Convergence
 
