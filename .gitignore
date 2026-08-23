@@ -16,6 +16,9 @@ api-keys.txt
 # Research session outputs
 research-sessions/
 
+# Local Git worktrees
+.worktrees/
+
 # Logs
 *.log
 *.jsonl
