@@ -6,6 +6,8 @@ skill="$repo_root/plugins/pi-tools/skills/pi-refine/SKILL.md"
 
 for required in \
   '"runner": "paseo"' \
+  'For a general document, use `reviewer`' \
+  'Do not start a Paseo job for this path.' \
   'paseo provider models claude --thinking' \
   'require a `claude-opus-5` row that' \
   'lists `high`' \

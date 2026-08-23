@@ -47,16 +47,23 @@ never clean and never skipped.
 
 ## Subject Contract
 
-For codebase-grounded subjects, use `plan-reviewer`. Pin exactly one subject
-file via `reads: [absoluteSpecPath]`; it must be the first text document in
-`reads`. Pass the repository root separately so Paseo can inspect the same
+For a codebase-grounded design spec, use `plan-reviewer`. Pin exactly one
+subject file via `reads: [absoluteSpecPath]`; it must be the first text document
+in `reads`. Pass the repository root separately so Paseo can inspect the same
 codebase. Do not let either reviewer guess the subject.
+
+## General Documents
+
+For a general document, use `reviewer` with the pinned document and a text-only
+review task. Do not use `plan-reviewer`, claim a design-spec roster slot, or
+inspect a repository. Do not start a Paseo job for this path. This remains a
+manual pi-refine capability; no automatic caller dispatches it.
 
 ## Round-Robin Claim
 
-Claim a slot immediately before **every** dispatch, including after an automatic
-edit or a user answer. The persistent cursor makes later specs begin after the
-last review call, not always with Kimi.
+For a codebase-grounded design spec, claim a slot immediately before **every**
+dispatch, including after an automatic edit or a user answer. The persistent
+cursor makes later specs begin after the last review call, not always with Kimi.
 
 ```bash
 state_dir="$HOME/.pi/agent/state"
@@ -78,8 +85,9 @@ slot `0`.
 
 ## Review Dispatch
 
-Run at most eight dispatches in one pass. Use the claimed object, not an
-iteration number, to choose the route.
+For a codebase-grounded design spec, run at most eight dispatches in one pass.
+Use the claimed object, not an iteration number, to choose the route. A manual
+general-document review uses `reviewer` directly and never enters this route.
 
 ### Pi route
 
@@ -161,12 +169,17 @@ Classify every finding:
   bikeshed, or unjustified scale-only/over-engineered suggestion.
 
 A review is clean only when it explicitly says `RESULT: clean` **and** has no
-substantive finding. A clean review immediately converges the pass; do not call
-the remaining roster entries. After a substantive edit, claim the next slot and
-review again. Do not require a full roster pass.
+substantive finding. A clean codebase-grounded design-spec review immediately
+converges the pass; do not call the remaining roster entries. After a
+substantive design-spec edit, claim the next slot and review again. Do not
+require a full roster pass.
 
-After eight dispatches without a clean review, report unresolved findings and
-pause. Never proceed to implementation planning from an unresolved pass.
+For a manual general document, use the same triage rules and re-dispatch
+`reviewer` after a substantive edit; no Paseo or design-spec roster applies.
+
+After eight design-spec dispatches without a clean review, report unresolved
+findings and pause. Never proceed to implementation planning from an unresolved
+pass.
 
 ## Completion Report
 
