@@ -40,7 +40,7 @@ is a dispatch failure. Never invent a model, thinking level, fallback, or
 replacement reviewer.
 
 Before a codebase-grounded design-spec dispatch, verify native IDs against Pi's
-loaded registry. For the Paseo entry, run `paseo provider diagnostic claude`,
+loaded registry. For an available Paseo entry, run `paseo provider diagnostic claude`,
 then `paseo provider models claude --thinking`; require a `claude-opus-5` row that lists `high`. Authentication, quota, model-resolution, permission,
 timeout, or execution failures pause refinement and are reported to the user;
 they are never clean and never skipped.
@@ -51,6 +51,24 @@ For a codebase-grounded design spec, use `plan-reviewer`. Pin exactly one
 subject file via `reads: [absoluteSpecPath]`; it must be the first text document
 in `reads`. Pass the repository root separately so Paseo can inspect the same
 codebase. Do not let either reviewer guess the subject.
+
+## Paseo Context Gate
+
+The Paseo route is available only when this agent is running inside Paseo. Check
+the two variables injected into a Paseo agent immediately before route selection:
+
+```bash
+inside_paseo=false
+if [ -n "${PASEO_AGENT_ID:-}" ] && [ -n "${PASEO_AGENT_CWD:-}" ]; then
+  inside_paseo=true
+fi
+```
+
+A `PASEO_AGENT_ID` alone is insufficient. If `inside_paseo` is `false`, the
+Paseo slot is skipped outside Paseo: advance the cursor for that claimed slot,
+do not count it as a dispatch, and claim the next slot. Do not run any `paseo`
+preflight, workspace, job, wait, inspect, or log command outside Paseo. This is
+a context gate, not a fallback or a dispatch failure.
 
 ## General Documents
 
@@ -63,6 +81,8 @@ Do not use `plan-reviewer`, claim a design-spec roster slot, or inspect a reposi
 For a codebase-grounded design spec, claim a slot immediately before **every**
 dispatch, including after an automatic edit or a user answer. The persistent
 cursor makes later specs begin after the last review call, not always with Kimi.
+A claimed Paseo slot outside the Paseo Context Gate advances the cursor but is
+not a dispatch; immediately claim the next slot.
 
 ```bash
 state_dir="$HOME/.pi/agent/state"
@@ -130,8 +150,9 @@ dependencies, data flow, feasibility, edge cases, and test coverage.
 
 ### Paseo route
 
-For `runner: "paseo"`, create a separate native-provider job in a local
-Paseo workspace for `repository_root`. Do not rely on `--cwd`: an ambient
+For `runner: "paseo"` only when the Paseo Context Gate is true, create a
+separate native-provider job in a local Paseo workspace for `repository_root`.
+Do not rely on `--cwd`: an ambient
 `PASEO_AGENT_ID` can select the caller workspace instead. Reuse a workspace with
 the exact repository path or create one, then pass its explicit ID to the job.
 Use a unique prompt file and output file; do not add a wrapper, extension,

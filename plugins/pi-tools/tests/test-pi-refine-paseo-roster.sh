@@ -18,6 +18,9 @@ for required in \
   'For a general document, do not run native-model or Paseo preflight.' \
   'Do not start a Paseo job for this path.' \
   'return a manual general-document review to its caller.' \
+  'PASEO_AGENT_ID' \
+  'PASEO_AGENT_CWD' \
+  'Paseo slot is skipped outside Paseo' \
   'paseo provider models claude --thinking' \
   'require a `claude-opus-5` row that' \
   'lists `high`' \
@@ -43,9 +46,10 @@ done
 
 log_file="$(mktemp)"
 cursor_snippet="$(mktemp)"
+paseo_context_snippet="$(mktemp)"
 cursor_home="$(mktemp -d)"
 agent_probe="$(mktemp --suffix=.mjs)"
-trap 'rm -f "$log_file" "$cursor_snippet" "$agent_probe"; rm -rf "$cursor_home"' EXIT
+trap 'rm -f "$log_file" "$cursor_snippet" "$paseo_context_snippet" "$agent_probe"; rm -rf "$cursor_home"' EXIT
 printf 'Start with exactly one line: RESULT: clean or RESULT: findings.\n' >"$log_file"
 ! grep -Eq '^RESULT: (clean|findings)$' "$log_file"
 printf 'RESULT: findings\n' >>"$log_file"
@@ -75,6 +79,18 @@ EOF
 PI_CODING_AGENT_DIR="$cursor_home" REPO_ROOT="$repo_root" \
   PI_SUBAGENTS_ROOT="$subagents_root" PI_JITI_MODULE="$jiti_module" \
   node "$agent_probe" | grep -F 'plan-reviewer package opencode-go/kimi-k3:max'
+
+awk '
+  /^## Paseo Context Gate$/ { section = 1; next }
+  section && /^```bash$/ { code = 1; next }
+  code && /^```$/ { exit }
+  code { print }
+' "$skill" >"$paseo_context_snippet"
+printf 'printf "%%s\\n" "$inside_paseo"\n' >>"$paseo_context_snippet"
+test "$(env -u PASEO_AGENT_ID -u PASEO_AGENT_CWD bash "$paseo_context_snippet")" = false
+test "$(PASEO_AGENT_ID=agent PASEO_AGENT_CWD=/repo bash "$paseo_context_snippet")" = true
+test "$(PASEO_AGENT_ID=agent env -u PASEO_AGENT_CWD bash "$paseo_context_snippet")" = false
+test "$(PASEO_AGENT_CWD=/repo env -u PASEO_AGENT_ID bash "$paseo_context_snippet")" = false
 
 awk '
   /^## Round-Robin Claim$/ { section = 1; next }
