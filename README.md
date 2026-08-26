@@ -36,8 +36,10 @@ AI-powered code and document review tools using pi-subagents.
 
 **Skills included:**
 
+- `brainstorming` - Thin overlay that adds automatic architectural design-spec refinement to upstream Superpowers
 - `pi-review` - One-off code/design review via the `reviewer` builtin subagent
-- `pi-refine` - Iteratively refine documents through repeated `reviewer` subagent reviews until convergence
+- `pi-refine` - Iteratively refine documents through repeated codebase-grounded reviews until convergence
+- `plan-reviewer` agent - Packaged reviewer used by codebase-grounded design-spec refinement
 
 ### wslopen-tools
 
@@ -55,7 +57,7 @@ Safe WSL-to-Windows directory/file links plus one shared link-authoring skill. S
 pi install git:github.com/kthorn/kthorn-skills
 ```
 
-This installs `pi-review`, `pi-refine`, and `using-wslopen`. `pi-review` and `pi-refine` require [pi-subagents](https://github.com/mariozechner/pi-subagents); `using-wslopen` also needs the Windows handler described in its [plugin README](plugins/wslopen-tools/README.md).
+This installs `brainstorming`, `pi-review`, `pi-refine`, and `using-wslopen`. `brainstorming` delegates to an installed upstream [Superpowers](https://github.com/obra/superpowers) package; list `kthorn-skills` before Superpowers in `settings.json` so its overlay wins the `brainstorming` name collision. `pi-review` and `pi-refine` require [pi-subagents](https://github.com/mariozechner/pi-subagents). `using-wslopen` also needs the Windows handler described in its [plugin README](plugins/wslopen-tools/README.md).
 
 ### Claude Code marketplace (all plugins)
 
@@ -101,6 +103,7 @@ git clone https://github.com/kthorn/kthorn-skills.git
 ### Pi Tools
 
 - [pi-subagents](https://github.com/mariozechner/pi-subagents) installed and configured
+- Upstream [Superpowers](https://github.com/obra/superpowers) installed when using the `brainstorming` overlay
 - Compatible pi coding agent with subagent support
 
 ### Wslopen Tools
