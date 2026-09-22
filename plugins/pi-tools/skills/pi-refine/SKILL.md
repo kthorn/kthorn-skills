@@ -21,7 +21,7 @@ For a codebase-grounded design spec, read this required configuration from `~/.p
     "modelRoster": [
       { "runner": "pi", "model": "opencode-go/kimi-k3", "thinking": "max" },
       { "runner": "pi", "model": "opencode-go/qwen3.8-max", "thinking": "max" },
-      { "runner": "pi", "model": "opencode-go/grok-4.5", "thinking": "high" },
+      { "runner": "pi", "model": "opencode-go/grok-4.6", "thinking": "high" },
       {
         "runner": "paseo",
         "provider": "claude",
@@ -142,7 +142,7 @@ subagent({
 ```
 
 The suffix is mandatory for every native route, including
-`opencode-go/grok-4.5:high`; do not rely on the agent definition's default
+`opencode-go/grok-4.6:high`; do not rely on the agent definition's default
 thinking level. Treat a missing or different reported model/thinking level as a
 dispatch failure. The task must require file-and-line citations and these
 checks: file/module references, architecture alignment, API compatibility,

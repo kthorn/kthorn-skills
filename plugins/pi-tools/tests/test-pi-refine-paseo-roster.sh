@@ -66,12 +66,12 @@ cat >"$agent_probe" <<'EOF'
 const { createJiti } = await import(process.env.PI_JITI_MODULE);
 const jiti = createJiti(import.meta.url, { interopDefault: true });
 const { discoverAgents } = await jiti.import(`${process.env.PI_SUBAGENTS_ROOT}/src/agents/agents.ts`);
-const { applyThinkingSuffix } = await jiti.import(`${process.env.PI_SUBAGENTS_ROOT}/src/runs/shared/pi-args.ts`);
+const { applyThinkingSuffix } = await jiti.import(`${process.env.PI_SUBAGENTS_ROOT}/src/runs/shared/child-tool-plan.ts`);
 const agent = discoverAgents(process.env.REPO_ROOT, "user").agents.find((entry) => entry.name === "plan-reviewer");
 if (!agent || agent.source !== "package" || agent.filePath !== `${process.env.REPO_ROOT}/agents/plan-reviewer.md`) {
   throw new Error(JSON.stringify(agent));
 }
-if (applyThinkingSuffix("opencode-go/grok-4.5", "high") !== "opencode-go/grok-4.5:high") {
+if (applyThinkingSuffix("opencode-go/grok-4.6", "high") !== "opencode-go/grok-4.6:high") {
   throw new Error("thinking suffix missing");
 }
 console.log(`${agent.name} ${agent.source} ${agent.model}:${agent.thinking}`);
