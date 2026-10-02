@@ -1,7 +1,7 @@
 {
   "name": "codex-tools",
-  "description": "AI-powered code and document review tools. Dispatch OpenAI Codex CLI for independent plan reviews, PR reviews, and iterative document refinement.",
-  "version": "1.0.0",
+  "description": "Scoped review and document refinement with shared evidence/disposition guidance and optional Codex or configured Pi transport.",
+  "version": "2.0.0",
   "author": {
     "name": "kthorn"
   }

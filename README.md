@@ -1,6 +1,6 @@
 # kthorn-skills
 
-A collection of skills for [pi coding agent](https://github.com/mariozechner/pi-coding-agent) and Claude Code, organized as a marketplace with multiple plugins.
+A collection of portable skills for Pi, Claude Code, and Codex, organized as a marketplace with optional plugins.
 
 ## Plugins
 
@@ -23,23 +23,16 @@ Systematic literature searching and review toolkit. Search PubMed, screen papers
 
 ### codex-tools
 
-AI-powered code and document review tools using OpenAI Codex CLI.
+The single owner of generic review/refinement procedure. The existing plugin identity is retained to avoid an installation rename; it now supports optional Codex and configured Pi transports.
 
 **Skills included:**
 
-- `codex-review` - Dispatch Codex CLI for independent review of plans, PRs, and code changes
-- `codex-refine` - Iteratively refine documents through repeated Codex reviews until convergence
+- `codex-review` / `codex-refine` - Operator-selected Codex review/document refinement
+- `pi-review` / `pi-refine` - Review/document refinement with configured Pi roles
+- `refining-specs` - Risk-triggered, transport-neutral specification refinement
+- `reviewing-complexity` - Explicitly requested, read-only complexity review
 
-### pi-tools
-
-AI-powered code and document review tools using pi-subagents.
-
-**Skills included:**
-
-- `brainstorming` - Thin overlay that adds automatic architectural design-spec refinement to upstream Superpowers
-- `pi-review` - One-off code/design review via the `reviewer` builtin subagent
-- `pi-refine` - Iteratively refine documents through repeated codebase-grounded reviews until convergence
-- `plan-reviewer` agent - Packaged reviewer used by codebase-grounded design-spec refinement
+The thin entrypoints load [one shared procedure](plugins/codex-tools/references/review-and-refinement.md). Review-only and authorized edits remain distinct. No model roster, mandatory delegated writer, automatic refinement overlay, or cross-plugin reference is required.
 
 ### wslopen-tools
 
@@ -51,65 +44,59 @@ Safe WSL-to-Windows directory/file links plus one shared link-authoring skill. S
 
 ## Installation
 
-### Pi skills
+### Pi
 
 ```bash
 pi install git:github.com/kthorn/kthorn-skills
 ```
 
-This installs `brainstorming`, `pi-review`, `pi-refine`, and `using-wslopen`. `brainstorming` delegates to an installed upstream [Superpowers](https://github.com/obra/superpowers) package; list `kthorn-skills` before Superpowers in `settings.json` so its overlay wins the `brainstorming` name collision. `pi-review` and `pi-refine` require [pi-subagents](https://github.com/mariozechner/pi-subagents). `using-wslopen` also needs the Windows handler described in its [plugin README](plugins/wslopen-tools/README.md).
+The package selects the six review/refinement skills and `using-wslopen`; research is not selected by the Pi manifest. Pi transport requires an installed, configured pi-subagents package. Codex transport requires an installed, authenticated Codex CLI only when chosen. WSL handler installation remains separate and explicit.
 
-### Claude Code marketplace (all plugins)
+For development, select the full `plugins/codex-tools/skills` source directory in Pi's `skills` configuration. Do not copy an isolated entrypoint: its package-local references must remain available.
 
-```bash
-claude mcp add-skill-marketplace https://github.com/kthorn/kthorn-skills
-```
-
-### Install individual plugins (Claude Code)
+### Claude Code
 
 ```bash
-# Research superpowers only
-claude plugin add https://github.com/kthorn/kthorn-skills/plugins/research-superpowers
-
-# Codex tools only
-claude plugin add https://github.com/kthorn/kthorn-skills/plugins/codex-tools
-
-# Wslopen tools only
-claude plugin add https://github.com/kthorn/kthorn-skills/plugins/wslopen-tools
+claude plugin marketplace add kthorn/kthorn-skills
+claude plugin install codex-tools@kthorn-skills
 ```
 
-### Manual installation
+Install `research-superpowers@kthorn-skills` or `wslopen-tools@kthorn-skills` separately only when wanted. Local testing can use `claude --plugin-dir /absolute/path/to/plugins/codex-tools`; do not register or install unrelated plugins just to review this package. `claude plugin validate` is a static check, not an efficacy test.
 
-Clone the repo and add the plugin directories to your configuration:
+### Codex
+
+Clone the repository and link the **entire review plugin**, retaining its nested skills and references:
 
 ```bash
 git clone https://github.com/kthorn/kthorn-skills.git
+mkdir -p ~/.agents/skills
+ln -s "$(realpath kthorn-skills/plugins/codex-tools)" ~/.agents/skills/codex-tools
 ```
+
+Do not overwrite an existing destination. Current native Codex discovery advertises these bundled skills as `codex-tools:<skill-name>` (for example, `codex-tools:refining-specs`). Confirm the names/source paths through the installed discovery interface, then start a fresh session. Pi-specific entrypoints require Pi tools; their presence does not authorize a different execution route. Shared source files remain the maintained owner rather than copied per-harness variants.
+
+## Version 2 migration
+
+- `pi-review` and `pi-refine` now live in `codex-tools`; remove explicit paths to the retired `plugins/pi-tools` directory and select the replacement before deleting local variants.
+- No `brainstorming` overlay is supplied. Upstream Superpowers remains independently installed and unmodified; no ordering trick is needed to shadow it.
+- Packaged `plan-reviewer` and model-rotation/cursor configuration are retired. Use configured native roles and capability discovery.
+- Move duplicate generic skills to a private rollback backup only after replacement paths resolve. Preserve unrelated settings and private domain skill selections.
+- Hosted Claude plugin users need the changed plugin version/update and a restart/reload; merging a commit alone does not prove a cached installation changed.
+
+## Checks and boundaries
+
+With Pi installed, run the native package check against its `dist/core/skills.js` module:
+
+```bash
+node plugins/codex-tools/tests/check-package.mjs /path/to/pi-coding-agent/dist/core/skills.js
+claude plugin validate .
+```
+
+It checks resource precedence and copied/symlinked reference loading, including an intentionally broken bundle. It does not execute models, install handlers, prove agent adherence, or measure review quality. Operator/repository scope and authority remain controlling.
 
 ## Prerequisites
 
-### Research Superpowers
-
-- PubMed MCP server (for literature search)
-- Semantic Scholar API (free, for citation traversal)
-- Unpaywall API (free, for open access discovery)
-- ChEMBL API (free, optional)
-
-### Codex Tools
-
-- [OpenAI Codex CLI](https://github.com/openai/codex) installed and configured
-- OpenAI API key
-
-### Pi Tools
-
-- [pi-subagents](https://github.com/mariozechner/pi-subagents) installed and configured
-- Upstream [Superpowers](https://github.com/obra/superpowers) installed when using the `brainstorming` overlay
-- Compatible pi coding agent with subagent support
-
-### Wslopen Tools
-
-- Windows with WSL and an explicit configured `/home/<user>` root
-- The per-user handler installed from [plugins/wslopen-tools](plugins/wslopen-tools/README.md)
+Research prerequisites remain PubMed MCP, Semantic Scholar, Unpaywall, and optional ChEMBL access. Review prerequisites depend on the selected transport, not a hardcoded model or authentication method. WSL prerequisites and handler setup are documented in its plugin README.
 
 ## License
 
