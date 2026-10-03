@@ -1,22 +1,23 @@
 {
   "name": "kthorn-skills",
+  "description": "Optional review/refinement, research, and WSL skills.",
   "owner": {
     "name": "kthorn"
   },
   "plugins": [
     {
       "name": "research-superpowers",
-      "source": "plugins/research-superpowers",
+      "source": "./plugins/research-superpowers",
       "description": "Systematic literature searching and review toolkit. Search PubMed, screen papers, extract data, traverse citations, and synthesize findings from scientific literature."
     },
     {
       "name": "codex-tools",
-      "source": "plugins/codex-tools",
-      "description": "AI-powered code and document review tools. Dispatch OpenAI Codex CLI for independent plan reviews, PR reviews, and iterative document refinement."
+      "source": "./plugins/codex-tools",
+      "description": "Portable review and document refinement with shared procedure and opposite-family independent reviewers."
     },
     {
       "name": "wslopen-tools",
-      "source": "plugins/wslopen-tools",
+      "source": "./plugins/wslopen-tools",
       "description": "Safe WSL-to-Windows file links and authoring guidance."
     }
   ]
