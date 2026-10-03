@@ -8,6 +8,12 @@ description: Use when an operator explicitly requests an over-engineering review
 Find justified cuts, not reasons to redesign. This is a read-only, deletion-focused
 review, not a general correctness review or an automatic-fix workflow.
 
+Load the [shared procedure](../../references/review-and-refinement.md) and
+[invocation guide](../../references/invocation.md). Requested or required independent
+review follows the shared opposite-family rule; unknown/unavailable family or route
+means stop and ask for help. Inline auditing remains valid when independent review
+is not required; do not add a review merely because a runner exists.
+
 ## Scope and evidence
 
 Start with the requested diff or files. Audit a repository only when explicitly

@@ -1,6 +1,6 @@
 {
   "name": "codex-tools",
-  "description": "Scoped review and document refinement with shared evidence/disposition guidance and optional Codex or configured Pi transport.",
+  "description": "Portable review and document refinement with shared evidence/disposition guidance and opposite-family independent reviewers.",
   "version": "2.0.0",
   "author": {
     "name": "kthorn"

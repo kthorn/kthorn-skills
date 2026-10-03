@@ -23,16 +23,18 @@ Systematic literature searching and review toolkit. Search PubMed, screen papers
 
 ### codex-tools
 
-The single owner of generic review/refinement procedure. The existing plugin identity is retained to avoid an installation rename; it now supports optional Codex and configured Pi transports.
+The single owner of portable review/refinement procedure for Pi, Codex, Claude, and Paseo-driven sessions. The historical plugin identity is retained to avoid an installation rename; skill names and invocation guidance are harness-neutral.
 
 **Skills included:**
 
-- `codex-review` / `codex-refine` - Operator-selected Codex review/document refinement
-- `pi-review` / `pi-refine` - Review/document refinement with configured Pi roles
-- `refining-specs` - Risk-triggered, transport-neutral specification refinement
+- `reviewing-work` - Requested read-only review of code, documents, plans, or PRs
+- `refining-documents` - Authorized targeted document fixes informed by verified findings
+- `refining-specs` - Risk-triggered specification refinement
 - `reviewing-complexity` - Explicitly requested, read-only complexity review
 
-The thin entrypoints load [one shared procedure](plugins/codex-tools/references/review-and-refinement.md). Review-only and authorized edits remain distinct. No model roster, mandatory delegated writer, automatic refinement overlay, or cross-plugin reference is required.
+The thin entrypoints load [one shared procedure](plugins/codex-tools/references/review-and-refinement.md) and [invocation guide](plugins/codex-tools/references/invocation.md). Requested or required independent review uses the opposite actual model family from the current working agent: Anthropic → OpenAI; OpenAI → Anthropic. Unknown/unsupported family or unavailable opposite reviewer means stop and ask for help, not same-family fallback. This selects reviewers; it does not add review frequency or require historical file-authorship analysis.
+
+Review-only and authorized document edits remain distinct. No fixed model roster, mandatory delegated writer, automatic refinement overlay, custom runner, or cross-plugin reference is required.
 
 ### wslopen-tools
 
@@ -50,7 +52,7 @@ Safe WSL-to-Windows directory/file links plus one shared link-authoring skill. S
 pi install git:github.com/kthorn/kthorn-skills
 ```
 
-The package selects the six review/refinement skills and `using-wslopen`; research is not selected by the Pi manifest. Pi transport requires an installed, configured pi-subagents package. Codex transport requires an installed, authenticated Codex CLI only when chosen. WSL handler installation remains separate and explicit.
+The package selects the four review/refinement skills and `using-wslopen`; research is not selected by the Pi manifest. Use available authorized Paseo/host agent mechanisms, or instructions to run Claude/Codex through an authorized route. There is no mandatory Pi delegation package. An authenticated CLI is needed only when chosen. Host permissions, sandbox, delegation, and continuation contracts still apply; runner failure is not permission to bypass them. WSL handler installation remains separate and explicit.
 
 For development, select the full `plugins/codex-tools/skills` source directory in Pi's `skills` configuration. Do not copy an isolated entrypoint: its package-local references must remain available.
 
@@ -73,11 +75,12 @@ mkdir -p ~/.agents/skills
 ln -s "$(realpath kthorn-skills/plugins/codex-tools)" ~/.agents/skills/codex-tools
 ```
 
-Do not overwrite an existing destination. Current native Codex discovery advertises these bundled skills as `codex-tools:<skill-name>` (for example, `codex-tools:refining-specs`). Confirm the names/source paths through the installed discovery interface, then start a fresh session. Pi-specific entrypoints require Pi tools; their presence does not authorize a different execution route. Shared source files remain the maintained owner rather than copied per-harness variants.
+Do not overwrite an existing destination. Current native Codex discovery advertises these bundled skills as `codex-tools:<skill-name>` (for example, `codex-tools:reviewing-work`). Confirm the names/source paths through the installed discovery interface, then start a fresh session. All four entrypoints use the same portable procedure; their presence does not supply missing delegation or execution authority. Shared source files remain the maintained owner rather than copied per-harness variants.
 
 ## Version 2 migration
 
-- `pi-review` and `pi-refine` now live in `codex-tools`; remove explicit paths to the retired `plugins/pi-tools` directory and select the replacement before deleting local variants.
+- `codex-review` and `pi-review` are replaced by `reviewing-work`; `codex-refine` and `pi-refine` by `refining-documents`. No aliases are supplied. Update named invocations and restart/reload cached sessions.
+- Remove explicit paths to the retired `plugins/pi-tools` directory and select the full replacement `plugins/codex-tools/skills` before deleting local variants.
 - No `brainstorming` overlay is supplied. Upstream Superpowers remains independently installed and unmodified; no ordering trick is needed to shadow it.
 - Packaged `plan-reviewer` and model-rotation/cursor configuration are retired. Use configured native roles and capability discovery.
 - Move duplicate generic skills to a private rollback backup only after replacement paths resolve. Preserve unrelated settings and private domain skill selections.
@@ -96,7 +99,7 @@ It checks resource precedence and copied/symlinked reference loading, including 
 
 ## Prerequisites
 
-Research prerequisites remain PubMed MCP, Semantic Scholar, Unpaywall, and optional ChEMBL access. Review prerequisites depend on the selected transport, not a hardcoded model or authentication method. WSL prerequisites and handler setup are documented in its plugin README.
+Research prerequisites remain PubMed MCP, Semantic Scholar, Unpaywall, and optional ChEMBL access. Review prerequisites depend on the selected authorized mechanism and actual opposite model family, not a hardcoded model or authentication method. WSL prerequisites and handler setup are documented in its plugin README.
 
 ## License
 

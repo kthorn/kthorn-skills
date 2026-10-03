@@ -13,7 +13,7 @@
     {
       "name": "codex-tools",
       "source": "./plugins/codex-tools",
-      "description": "Scoped review and document refinement with shared procedure and optional Codex or configured Pi transport."
+      "description": "Portable review and document refinement with shared procedure and opposite-family independent reviewers."
     },
     {
       "name": "wslopen-tools",
