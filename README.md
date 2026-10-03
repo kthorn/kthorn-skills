@@ -72,10 +72,11 @@ Clone the repository and link the **entire review plugin**, retaining its nested
 ```bash
 git clone https://github.com/kthorn/kthorn-skills.git
 mkdir -p ~/.agents/skills
-ln -s "$(realpath kthorn-skills/plugins/codex-tools)" ~/.agents/skills/codex-tools
+test ! -e ~/.agents/skills/codex-tools && test ! -L ~/.agents/skills/codex-tools && \
+  ln -s "$(realpath kthorn-skills/plugins/codex-tools)" ~/.agents/skills/codex-tools
 ```
 
-Do not overwrite an existing destination. Current native Codex discovery advertises these bundled skills as `codex-tools:<skill-name>` (for example, `codex-tools:reviewing-work`). Confirm the names/source paths through the installed discovery interface, then start a fresh session. All four entrypoints use the same portable procedure; their presence does not supply missing delegation or execution authority. Shared source files remain the maintained owner rather than copied per-harness variants.
+The guard fails if any destination exists, including a dangling symlink; inspect and back up an existing installation before intentionally replacing it. Do not overwrite an existing destination. Current native Codex discovery advertises these bundled skills as `codex-tools:<skill-name>` (for example, `codex-tools:reviewing-work`). Confirm the names/source paths through the installed discovery interface, then start a fresh session. All four entrypoints use the same portable procedure; their presence does not supply missing delegation or execution authority. Shared source files remain the maintained owner rather than copied per-harness variants.
 
 ## Version 2 migration
 
@@ -92,10 +93,11 @@ With Pi installed, run the native package check against its `dist/core/skills.js
 
 ```bash
 node plugins/codex-tools/tests/check-package.mjs /path/to/pi-coding-agent/dist/core/skills.js
+node plugins/codex-tools/tests/check-codex-install.mjs
 claude plugin validate .
 ```
 
-It checks resource precedence and copied/symlinked reference loading, including an intentionally broken bundle. It does not execute models, install handlers, prove agent adherence, or measure review quality. Operator/repository scope and authority remain controlling.
+The checks cover resource precedence, copied/symlinked reference loading (including an intentionally broken bundle), and the documented Codex install under a path with spaces and existing directory/file/live-or-dangling-link destinations. The install check uses Bash and substitutes only remote cloning. It does not execute models, install handlers, prove agent adherence, or measure review quality. Operator/repository scope and authority remain controlling.
 
 ## Prerequisites
 
