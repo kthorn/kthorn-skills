@@ -1,7 +1,7 @@
 {
   "name": "codex-tools",
-  "description": "Portable review and document refinement with shared evidence/disposition guidance and opposite-family independent reviewers.",
-  "version": "2.0.0",
+  "description": "Portable review, document refinement and redundancy audits with shared evidence/disposition guidance and opposite-family independent reviewers.",
+  "version": "2.1.0",
   "author": {
     "name": "kthorn"
   }

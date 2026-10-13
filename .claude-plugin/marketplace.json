@@ -13,7 +13,7 @@
     {
       "name": "codex-tools",
       "source": "./plugins/codex-tools",
-      "description": "Portable review and document refinement with shared procedure and opposite-family independent reviewers."
+      "description": "Portable review, document refinement and redundancy audits with shared procedure and opposite-family independent reviewers."
     },
     {
       "name": "wslopen-tools",

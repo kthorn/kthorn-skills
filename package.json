@@ -1,6 +1,6 @@
 {
   "name": "kthorn-skills",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Portable review/refinement skills and optional research and WSL tools",
   "keywords": ["pi-package"],
   "pi": {

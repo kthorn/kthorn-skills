@@ -31,6 +31,7 @@ The single owner of portable review/refinement procedure for Pi, Codex, Claude, 
 - `refining-documents` - Authorized targeted document fixes informed by verified findings
 - `refining-specs` - Risk-triggered specification refinement
 - `reviewing-complexity` - Explicitly requested, read-only complexity review
+- `auditing-redundancy` - Requested repository sweep for duplicated implementations and dead code, filed as issues or small PRs; reads an optional `docs/redundancy-audit.md` repository profile
 
 The thin entrypoints load [one shared procedure](plugins/codex-tools/references/review-and-refinement.md) and [invocation guide](plugins/codex-tools/references/invocation.md). Requested or required independent review uses the opposite actual model family from the current working agent: Anthropic → OpenAI; OpenAI → Anthropic. Unknown/unsupported family or unavailable opposite reviewer means stop and ask for help, not same-family fallback. This selects reviewers; it does not add review frequency or require historical file-authorship analysis.
 
@@ -52,7 +53,7 @@ Safe WSL-to-Windows directory/file links plus one shared link-authoring skill. S
 pi install git:github.com/kthorn/kthorn-skills
 ```
 
-The package selects the four review/refinement skills and `using-wslopen`; research is not selected by the Pi manifest. Use available authorized Paseo/host agent mechanisms, or instructions to run Claude/Codex through an authorized route. There is no mandatory Pi delegation package. An authenticated CLI is needed only when chosen. Host permissions, sandbox, delegation, and continuation contracts still apply; runner failure is not permission to bypass them. WSL handler installation remains separate and explicit.
+The package selects the five review/refinement skills and `using-wslopen`; research is not selected by the Pi manifest. Use available authorized Paseo/host agent mechanisms, or instructions to run Claude/Codex through an authorized route. There is no mandatory Pi delegation package. An authenticated CLI is needed only when chosen. Host permissions, sandbox, delegation, and continuation contracts still apply; runner failure is not permission to bypass them. WSL handler installation remains separate and explicit.
 
 For development, select the full `plugins/codex-tools/skills` source directory in Pi's `skills` configuration. Do not copy an isolated entrypoint: its package-local references must remain available.
 
@@ -76,7 +77,7 @@ test ! -e ~/.agents/skills/codex-tools && test ! -L ~/.agents/skills/codex-tools
   ln -s "$(realpath kthorn-skills/plugins/codex-tools)" ~/.agents/skills/codex-tools
 ```
 
-The guard fails if any destination exists, including a dangling symlink; inspect and back up an existing installation before intentionally replacing it. Do not overwrite an existing destination. Current native Codex discovery advertises these bundled skills as `codex-tools:<skill-name>` (for example, `codex-tools:reviewing-work`). Confirm the names/source paths through the installed discovery interface, then start a fresh session. All four entrypoints use the same portable procedure; their presence does not supply missing delegation or execution authority. Shared source files remain the maintained owner rather than copied per-harness variants.
+The guard fails if any destination exists, including a dangling symlink; inspect and back up an existing installation before intentionally replacing it. Do not overwrite an existing destination. Current native Codex discovery advertises these bundled skills as `codex-tools:<skill-name>` (for example, `codex-tools:reviewing-work`). Confirm the names/source paths through the installed discovery interface, then start a fresh session. All five entrypoints use the same portable procedure; their presence does not supply missing delegation or execution authority. Shared source files remain the maintained owner rather than copied per-harness variants.
 
 ## Version 2 migration
 
