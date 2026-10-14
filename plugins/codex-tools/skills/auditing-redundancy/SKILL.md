@@ -30,16 +30,16 @@ and ask the operator for labels and delivery rules before filing anything.
 
 **Duplication is one policy enforced at several sites.** A policy is a rule about bytes, identity,
 bounds, error classification, security, lifecycle, or presentation: "canonical JSON sorts keys and
-rejects NaN", "an object-store read is bounded and pinned to the observed version", "this exception
-means retry". The unit of finding is the policy and its canonical owner, not a clone pair. Textual
-similarity is neither necessary nor sufficient: the costly copies usually share no tokens (a
-`json.dumps(sort_keys=True)` beside an incremental encoder), while look-alike boilerplate may be
+rejects NaN", "a file read is bounded and pinned to the version it validated", "this error means
+retry". The unit of finding is the policy and its canonical owner, not a clone pair. Textual
+similarity is neither necessary nor sufficient: the costly copies usually share no tokens (a library
+serializer call beside a hand-written streaming encoder), while look-alike boilerplate may be
 deliberate layering. Search for what code *does*, then compare how.
 
 **Dead code is a definition whose effect no production path consumes.** References overstate
-liveness: tests, registries, `__all__` lists, schemas, settings models, re-exports, and its own
-module keep dead code referenced. Reference-based tools (vulture, ts-prune, knip) are a first pass
-only; the dead code agents leave behind is usually still referenced.
+liveness: tests, registries, export lists, schemas, settings models, re-exports, and its own module
+keep dead code referenced. Reference-based dead-code tools are a first pass only; the dead code
+agents leave behind is usually still referenced.
 
 **Drift is the priority signal.** When copies disagree, at least one is probably wrong, and any
 consolidation forces a behavior decision. A drifted copy is a latent bug report; an identical copy
@@ -55,13 +55,13 @@ Run every generator over the scope. They are complementary; each misses what ano
    header and field names. Do not search only for the canonical helper's name; bypasses never
    mention it.
 2. **Chokepoint bypass.** Inventory the canonical owners: shared or common packages, per-package
-   core modules, spec-declared chokepoints, and generated contracts (API clients, schema types). For
+   core modules, documented chokepoints, and generated contracts (API clients, schema types). For
    each, find code doing the same job without calling it. List every bypass site; one example is
    not a finding.
-3. **Structural clones.** Cheap and low-recall; use for candidates only. Examples: `jscpd` over the
-   source globs with tests excluded (it skips gitignored paths, so point it at a symlink when the
-   checkout lives under an ignored directory), identifier-normalized AST hashes, same-name symbols
-   across modules, and sync/async twin modules.
+3. **Structural clones.** Cheap and low-recall; use for candidates only. Examples: a copy-paste
+   detector over the source files with tests excluded (check whether it silently skips ignored
+   paths), identifier-normalized syntax-tree hashes, same-name symbols across modules, and
+   sync/async twin modules.
 4. **Consumer reachability (dead code).** Build a production reference graph with tests excluded.
    Classify each symbol: unreferenced, test-only, self-only, registry/re-export-only. Then apply the
    semantic dead-code lenses, which the graph cannot see: written-never-read fields and settings,
@@ -88,8 +88,8 @@ background processes of their own. A cell that did not return is uncovered: reru
 A quiet cell is evidence only if its search could have found a known instance; calibrate on the
 profile's examples, a closed duplication or cleanup issue, or a removal in git history.
 
-Cost scales with scope. One package of about 80k lines took 9 cells and 9 verifiers, roughly
-3.5M tokens. When the operator gives no scope, state the planned cell count before dispatching.
+Cost scales with scope and cell count; a single large package can take millions of tokens. When the
+operator gives no scope, state the planned cell count before dispatching.
 
 Worker return contract, per candidate: the policy (one sentence) or dead symbol; every site as
 `path:symbol`; a difference table across sites; for dead code, consumer evidence (searches run and
@@ -102,7 +102,7 @@ Before filing, confirm each candidate:
 - **Read every site.** Tabulate differences: accepted inputs, limits, encoding, error mapping,
   logging, side effects. Classify each difference as intentional (cite where), accidental drift
   (say which side looks correct and why), or imposed by the environment.
-- **Check intent.** Search the repository's decision records, specs, and completed plans for each
+- **Check intent.** Search the repository's decision records, specs, and design docs for each
   site's symbol names, module paths, and the concept. Respect dependency and deployable boundaries:
   a package that cannot depend on the shared one may need its own copy. Drop deliberate duplication
   unless its recorded rationale no longer holds, and cite the record in the dropped list so the
@@ -110,9 +110,9 @@ Before filing, confirm each candidate:
   format, a persisted identity) constrains the repair and its parity test; it does not justify the
   copies.
 - **Exhaust dynamic consumers for dead code:** decorator and route registration, registries and
-  string dispatch, `getattr`, package entry points, build files, CI, deploy, evals, operator
-  scripts, templates, and frontend entry points. A field may be dead in code yet live in persisted
-  data or wire payloads; that removal is a migration question.
+  string dispatch, reflection, package entry points, build files, CI, deploy configuration,
+  evaluation harnesses, operator scripts, templates, and frontend entry points. A field may be dead
+  in code yet live in persisted data or wire payloads; that removal is a migration question.
 - **Refute independently.** Send each surviving finding to a fresh read-only verifier with the
   claim and sites, tasked to refute it; one verifier may take a themed group of about five. Drop or
   downgrade what it refutes, and file the verifier's corrections, not the worker's wording. For
@@ -149,7 +149,7 @@ of a safety check, docs that describe it as live) and by the maintenance it attr
 - **Behavior:** name the callers whose behavior changes. Require a parity test over representative
   inputs, written against the existing copies before migration.
 - **Recurrence guard:** where a raw call must happen only inside the owner, propose a lint
-  restriction (for example, a banned-API rule) or a spec chokepoint entry.
+  restriction (for example, a banned-API rule) or document the owner as the required entry point.
 - **Grouping:** one issue per independently reviewable PR. A new primitive with many consumer
   migrations gets an issue for the primitive and one per risky consumer migration; mechanical
   migrations can share an issue.
@@ -166,10 +166,10 @@ Unless `drafts-only`:
   of public trackers until the operator chooses a disclosure route.
 - **PR lane:** only for repairs with no open decision: dead code with no production consumer after
   the dynamic-consumer check, or migration onto an existing canonical owner with identical behavior
-  for all inputs. No persisted, wire, seam, or product change. Follow the repository's delivery
-  rules and keep one concern per PR. When a PR changes an object's interface, search tests for
-  stand-in doubles of it (namespace objects, fakes, monkeypatched callables); they fail outside a
-  focused test run. Everything else is an issue.
+  for all inputs. No persisted, wire, cross-component interface, or product change. Follow the
+  repository's delivery rules and keep one concern per PR. When a PR changes an object's interface,
+  search tests for stand-in doubles of it (namespace objects, fakes, monkeypatched callables); they
+  fail outside a focused test run. Everything else is an issue.
 
 ## Completion
 
