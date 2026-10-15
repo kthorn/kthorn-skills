@@ -1,6 +1,6 @@
 {
   "name": "kthorn-skills",
-  "description": "Optional review/refinement, research, and WSL skills.",
+  "description": "Optional review, refinement, code cleanup, research, and WSL skills.",
   "owner": {
     "name": "kthorn"
   },
@@ -13,7 +13,7 @@
     {
       "name": "codex-tools",
       "source": "./plugins/codex-tools",
-      "description": "Portable review, document refinement and redundancy audits with shared procedure and opposite-family independent reviewers."
+      "description": "Portable review, scoped code cleanup, document refinement and redundancy audits with shared guidance and opposite-family independent reviewers."
     },
     {
       "name": "wslopen-tools",
