@@ -35,6 +35,8 @@ The single owner of portable review/refinement procedure for Pi, Codex, Claude, 
 
 The thin entrypoints load [one shared procedure](plugins/codex-tools/references/review-and-refinement.md) and [invocation guide](plugins/codex-tools/references/invocation.md). Requested or required independent review uses the opposite actual model family from the current working agent: Anthropic → OpenAI; OpenAI → Anthropic. Unknown/unsupported family or unavailable opposite reviewer means stop and ask for help, not same-family fallback. This selects reviewers; it does not add review frequency or require historical file-authorship analysis.
 
+Code reviews additionally load the [code/test-quality reference](plugins/codex-tools/references/code-quality.md); prose-only reviews do not. [Upstream selections and local departures](plugins/codex-tools/UPSTREAMS.md) record the consulted source revisions without adding skills or loading upstream workflows.
+
 Review-only and authorized document edits remain distinct. No fixed model roster, mandatory delegated writer, automatic refinement overlay, custom runner, or cross-plugin reference is required.
 
 ### wslopen-tools
