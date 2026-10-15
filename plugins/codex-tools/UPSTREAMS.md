@@ -2,7 +2,7 @@
 
 These are sources consulted for the owned guidance, not additional instructions to load. Local destinations retain their existing scope and authority boundaries. Superpowers remains the unchanged development-workflow owner; this bundle does not import another lifecycle.
 
-The current reference and refinement text is locally worded guidance about selected techniques, not a copy of an upstream prompt or skill. Source licenses and credits are recorded below for future updates and textual reuse. The repository's MIT license does not replace any license or notice that applies to copied upstream material.
+The current reference, refinement, and cleanup text is locally worded guidance about selected techniques, not a copy of an upstream prompt or skill. Source licenses and credits are recorded below for future updates and textual reuse. The repository's MIT license does not replace any license or notice that applies to copied upstream material.
 
 ## Unslop Code
 
@@ -38,7 +38,9 @@ Source: published `pi-mono-simplify@1.7.3`, specifically `index.ts`, `README.md`
 
 Credit/license: copyright 2026 Emanuel Casco, MIT; retain the published `LICENCE.md` notice when reusing source text.
 
-The reuse, quality, and efficiency review lists were inspected for overlap. Existing owned review/complexity guidance covers reuse; the supplementary code-quality reference covers selected maintainability concerns. The fixed three-agent workflow, automatic edits, and additional efficiency checklist are not imported. This record does not install or remove `/simplify`.
+The [simplifying-code](skills/simplifying-code/SKILL.md) skill retains the explicit review-and-fix action, focused on reuse, clarity, and unnecessary work. It loads the shared code/test-quality criteria, bounds cleanup to the requested PR/base diff or named scope, and leaves consequential behavior decisions to the operator. It is distinct from read-only review and does not authorize commits or opening a PR.
+
+The fixed three-agent workflow and fallback to recently modified files are not imported. Detailed efficiency checks remain unimported beyond the ordinary repeated-work criterion. No automatic pre-PR invocation is added, and this record does not install or remove `/simplify`.
 
 ## Existing owned redundancy audit
 
