@@ -87,13 +87,14 @@ For **systematic literature review**:
 
 ## Finding Skills
 
-Use the find-skills script to search for relevant skills:
+The research skills are available as `research-superpowers:<skill-name>` (for example, `research-superpowers:searching-literature`).
+
+To search them by pattern, run the find-skills script at the path printed in the session-start message. It is in the plugin's install directory, not the project directory:
 
 ```bash
-# From project directory
-./scripts/find-skills              # List all skills
-./scripts/find-skills literature   # Search for "literature"
-./scripts/find-skills 'cite|ref'   # Regex search
+<plugin-root>/scripts/find-skills              # List all skills
+<plugin-root>/scripts/find-skills literature   # Search for "literature"
+<plugin-root>/scripts/find-skills 'cite|ref'   # Regex search
 ```
 
 ## Remember

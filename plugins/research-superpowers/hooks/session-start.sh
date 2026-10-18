@@ -16,10 +16,7 @@ Available research skills:
 - evaluating-paper-relevance - Abstract screening + data extraction
 - traversing-citations - Citation network traversal
 
-Find skills: ./scripts/find-skills [pattern]
-Get started: Read skills/getting-started/SKILL.md
+Find skills: $PROJECT_ROOT/scripts/find-skills [pattern]
+Get started: Read $PROJECT_ROOT/skills/getting-started/SKILL.md
 
 EOF
-
-# Set environment variable for other scripts to find the project
-export RESEARCH_SUPERPOWERS_ROOT="$PROJECT_ROOT"
