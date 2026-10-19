@@ -69,6 +69,3 @@ find "$SKILLS_DIR" -name "SKILL.md" -type f | sort | while read -r skill_file; d
         echo "$output"
     fi
 done
-
-# Print summary line at top
-echo "skills/One-line summary of what this does"
