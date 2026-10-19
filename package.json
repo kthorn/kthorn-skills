@@ -1,7 +1,7 @@
 {
   "name": "kthorn-skills",
-  "version": "2.2.0",
-  "description": "Portable review, refinement, and code cleanup skills with optional research and WSL tools",
+  "version": "2.3.0",
+  "description": "Portable review, refinement, code cleanup and audit skills with optional research and WSL tools",
   "keywords": ["pi-package"],
   "pi": {
     "skills": ["./plugins/codex-tools/skills", "./plugins/wslopen-tools/skills"]

@@ -33,10 +33,11 @@ The owned home for portable review, refinement, and scoped code cleanup for Pi, 
 - `reviewing-complexity` - Explicitly requested, read-only complexity review
 - `simplifying-code` - Requested review-and-fix cleanup of scoped code changes, including an explicit pre-PR pass; does not commit or open the PR
 - `auditing-redundancy` - Requested repository sweep for duplicated implementations and dead code, filed as issues or small PRs; reads an optional `docs/redundancy-audit.md` repository profile
+- `auditing-correctness` - Requested pre-release correctness audit of a subsystem: audit-first invariant candidates, property tests and formal models only where they add value, and each finding fixed as its own PR; reads an optional `docs/correctness-audit.md` repository profile
 
 The review/refinement entrypoints retain their [shared procedure](plugins/codex-tools/references/review-and-refinement.md) and [invocation guide](plugins/codex-tools/references/invocation.md). Requested or required independent review uses the opposite actual model family from the current working agent: Anthropic → OpenAI; OpenAI → Anthropic. Unknown/unsupported family or unavailable opposite reviewer means stop and ask for help, not same-family fallback. This selects reviewers; it does not add review frequency or require historical file-authorship analysis.
 
-`reviewing-work` additionally loads the [code/test-quality reference](plugins/codex-tools/references/code-quality.md) for code reviews, not prose-only reviews. `simplifying-code` uses the same criteria with its own explicitly requested editing scope, rather than adopting review-only permissions. It does not add an automatic pre-PR trigger. The redundancy-audit workflow remains separate.
+`reviewing-work` additionally loads the [code/test-quality reference](plugins/codex-tools/references/code-quality.md) for code reviews, not prose-only reviews. `simplifying-code` uses the same criteria with its own explicitly requested editing scope, rather than adopting review-only permissions. It does not add an automatic pre-PR trigger. The redundancy-audit and correctness-audit workflows remain separate.
 
 [Upstream selections and local departures](plugins/codex-tools/UPSTREAMS.md) record the consulted source revisions without loading upstream workflows.
 

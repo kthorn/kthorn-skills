@@ -1,7 +1,7 @@
 {
   "name": "codex-tools",
-  "description": "Portable review, scoped code cleanup, document refinement and redundancy audits with shared evidence/disposition guidance and opposite-family independent reviewers.",
-  "version": "2.2.0",
+  "description": "Portable review, scoped code cleanup, document refinement, redundancy audits and correctness audits with shared evidence/disposition guidance and opposite-family independent reviewers.",
+  "version": "2.3.0",
   "author": {
     "name": "kthorn"
   }
