@@ -1,6 +1,6 @@
 ---
 name: auditing-correctness
-description: Use when an operator asks for a correctness audit of a subsystem before it ships, is switched on or is migrated, using property-based tests and formal models (TLA+/TLC, Lean) only where they add value, with findings fixed as separate PRs.
+description: Use when an operator asks for a correctness audit of a subsystem before it ships, is switched on or is migrated, including requests to apply property-based testing or formal methods (TLA+/TLC, Lean) where they add value.
 ---
 
 # Auditing correctness
@@ -99,8 +99,9 @@ with the [fix brief template](references/templates.md#fix-brief).
 Run this loop for each implementation round:
 
 1. The implementer commits the failing regression first, then the fix.
-2. **Red/green yourself.** Run the round's new tests at the previous round's commit (expect
-   failure) and at the head (expect a pass), in a temporary worktree. Copy the test files in, so
+2. **Red/green yourself.** Take the round's new or changed test node ids from the brief or the
+   implementer's report. Run them at the previous round's commit (expect each to fail for the
+   defect, not for a collection error) and at the head (expect a pass), in a temporary worktree. Copy the test files in, so
    that files the branch adds don't break the check. Use a per-test timeout, because unfixed code
    can hang ([harness.md](references/harness.md#redgreen)).
 3. **Review.** Use `reviewing-work` for an independent read-only review of the round. After a fix
@@ -110,7 +111,7 @@ Run this loop for each implementation round:
    repository's pre-PR cleanup.
 
 Expect the fix rounds to find defects of their own. In the reference campaign, review or CI
-caught real defects in most fix PRs. These included:
+caught real defects in six fix PRs. These included:
 - an implementer departing from its brief;
 - the orchestrator's own brief encoding the wrong contract;
 - a fix that conflicted with an existing owner-scoped oracle.

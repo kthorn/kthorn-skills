@@ -59,7 +59,7 @@ Safe WSL-to-Windows directory/file links plus one shared link-authoring skill. S
 pi install git:github.com/kthorn/kthorn-skills
 ```
 
-The package selects the six `codex-tools` skills and `using-wslopen`; research is not selected by the Pi manifest. Use available authorized Paseo/host agent mechanisms, or instructions to run Claude/Codex through an authorized route. There is no mandatory Pi delegation package. An authenticated CLI is needed only when chosen. Host permissions, sandbox, delegation, and continuation contracts still apply; runner failure is not permission to bypass them. WSL handler installation remains separate and explicit.
+The package selects the `codex-tools` skills and `using-wslopen`; research is not selected by the Pi manifest. Use available authorized Paseo/host agent mechanisms, or instructions to run Claude/Codex through an authorized route. There is no mandatory Pi delegation package. An authenticated CLI is needed only when chosen. Host permissions, sandbox, delegation, and continuation contracts still apply; runner failure is not permission to bypass them. WSL handler installation remains separate and explicit.
 
 For development, select the full `plugins/codex-tools/skills` source directory in Pi's `skills` configuration. Do not copy an isolated entrypoint: its package-local references must remain available.
 

@@ -35,7 +35,7 @@ or guards a subtle invariant the code depends on. Exploratory models stay on the
 ```bash
 set -uo pipefail
 lane="$1"; survived=0
-git diff --quiet -- <src> || { echo "src not clean"; exit 2; }
+git diff --quiet -- "<src>" || { echo "src not clean"; exit 2; }
 for p in "<lane-dir>/$lane"/mutations/*.patch; do
   git apply "$p" || exit 2
   out="$(NO_SHRINK=1 pytest -q -x --hypothesis-seed=0 "<lane-dir>/$lane" 2>&1)"
@@ -63,21 +63,24 @@ from production signatures.
 ## Red/green
 
 Run this for every implementation round. `PREV` is the previous round's commit, or the PR base for
-round one.
+round one. `NODES` lists the round's new or changed test node ids, taken from the brief or the
+implementer's report. Don't derive the list from the diff: that misses class methods, added
+parameters and edits inside existing tests.
 
 ```bash
-FW=<fix worktree>; PREV=<commit>; T=<scratch worktree path>
-files=$(git -C "$FW" diff --name-only --diff-filter=AM "$PREV"..HEAD -- '<tests>/**/*.py')
-tests=$(git -C "$FW" diff "$PREV"..HEAD -- '<tests>/**/*.py' \
-  | sed -nE 's/^\+(async )?def (test_[a-z0-9_]+).*/\2/p' | sort -u | paste -sd' ')
+FW="<fix worktree>"; PREV="<commit>"; T="<scratch worktree path>"
+NODES=("<path/test_x.py::test_a>" "<path/test_x.py::TestY::test_b>")
+[ "${#NODES[@]}" -gt 0 ] || { echo "no node ids for this round"; exit 2; }
+files=$(git -C "$FW" diff --name-only --diff-filter=AM "$PREV"..HEAD -- '<tests>')
 git worktree add --detach "$T" "$PREV"
 for f in $files; do mkdir -p "$T/$(dirname "$f")"; git -C "$FW" show "HEAD:$f" > "$T/$f"; done
-# sync dependencies in $T, then run the same selection in both trees:
-(cd "$T"  && pytest -q --timeout=120 $files -k "${tests// / or }")   # expect failures
-(cd "$FW" && pytest -q --timeout=120 $files -k "${tests// / or }")   # expect passes
+# Sync dependencies in $T, then run each tree with its own environment, never a bare `pytest`:
+(cd "$T"  && .venv/bin/python -m pytest -q --timeout=120 "${NODES[@]}")   # expect each to fail for the defect
+(cd "$FW" && .venv/bin/python -m pytest -q --timeout=120 "${NODES[@]}")   # expect passes
 git worktree remove --force "$T"
 ```
 
 Copying the test files into a scratch worktree is safe even when the branch adds source files,
-which `git checkout <base> -- <files>` is not. The timeout matters because unfixed concurrency
-code can block forever.
+which `git checkout <base> -- <files>` is not. Read the red output: an import or collection error
+is not a failing regression. The timeout matters because unfixed concurrency code can block
+forever. Use the repository's runner if it is not pytest.
