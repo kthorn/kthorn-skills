@@ -13,7 +13,7 @@
     {
       "name": "codex-tools",
       "source": "./plugins/codex-tools",
-      "description": "Portable review, scoped code cleanup, document refinement and redundancy audits with shared guidance and opposite-family independent reviewers."
+      "description": "Portable review, scoped code cleanup, document refinement, redundancy audits and correctness audits with shared guidance and opposite-family independent reviewers."
     },
     {
       "name": "wslopen-tools",

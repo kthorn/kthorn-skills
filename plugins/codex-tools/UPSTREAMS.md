@@ -46,6 +46,21 @@ The fixed three-agent workflow and fallback to recently modified files are not i
 
 The [auditing-redundancy](skills/auditing-redundancy/SKILL.md) skill and its lenses/filing references were inspected at owned repository commit `b69bf45372f65645a73076b6555d8872a51828cb`; this is an internal source, not a new external dependency. Its policy ownership, mechanics-versus-policy, drift/parity, and consumer/retirement ideas inform targeted questions in spec refinement. Its sweep, coverage ledger, workers, verification, filing, and PR workflow remain separate and unchanged.
 
+## Proptest Praxis
+
+Source: [inanna-malick/agent-skills `skills/proptest-praxis/SKILL.md`](https://github.com/inanna-malick/agent-skills/blob/ee03a7bcc316dfbaed56cfda16006ac10840d78a/skills/proptest-praxis/SKILL.md), reviewed at `ee03a7bcc316dfbaed56cfda16006ac10840d78a`.
+
+Credit/license: inanna-malick. The repository publishes no license at that revision, so no text is copied. [auditing-correctness](skills/auditing-correctness/SKILL.md) is locally worded guidance informed by its techniques and by one completed campaign that adapted it.
+
+| Source idea | Local destination | Deliberate departure |
+| --- | --- | --- |
+| Discovery branch separate from focused fix PRs with deterministic regressions | auditing-correctness Phase 1 and Phase 2 | Discovery reproductions are strict xfails indexed in an audit file and retired when fixes merge |
+| Mutation testing as harness calibration; behavioural coverage | [harness.md](skills/auditing-correctness/references/harness.md) | Every mutant must be caught by a failing test; zero-hit coverage labels fail the run |
+| Investigate both implementation and oracle; causal isolation; root-cause clustering | auditing-correctness triage | Refutations and narrowings are recorded as evidence |
+| Security-sensitive findings stay private | auditing-correctness Findings | Unchanged in intent |
+
+Generator and oracle craft (operation ASTs, swarm testing, constructive generation, shrinking design) is not restated. The local skill adds read-only audit lanes with per-invariant candidates and oracle search, a candidate-shape tool table including TLA+/TLC and Lean, an operator gate for unstated invariants, a per-round red/green and review loop for fixes, and a closing record. The upstream's whole-repository open-ended search and continuous exploration are narrowed to a bounded subsystem with a stopping rule.
+
 ## Updating these selections
 
 Compare the relevant upstream files against the recorded revision/version. Adopt only changes that serve the owned scope, preserve intentional departures, and validate any changed guidance using the existing authoring and package checks. Update this record with the inspected revision and affected local destinations. Do not automatically overwrite local text or activate upstream packages.
