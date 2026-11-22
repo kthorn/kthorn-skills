@@ -8,7 +8,7 @@ Honor the host's permissions, sandbox, delegation, workspace ownership, and cont
 
 Provide a concise brief containing:
 
-- The requesting working agent's family and required opposite reviewer family.
+- The requesting working agent's family and the selected reviewer's different family.
 - The exact subject/version: document paths, or repository/base/head and intended diff.
 - The session-owned workspace, relevant context, questions, and evidence expectations.
 - A read-only assignment, scope limits, and stop conditions. A delegated reviewer cannot edit, publish, expand scope, or launch another reviewer.

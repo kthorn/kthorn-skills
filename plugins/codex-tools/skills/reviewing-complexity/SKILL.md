@@ -10,7 +10,7 @@ review, not a general correctness review or an automatic-fix workflow.
 
 Load the [shared procedure](../../references/review-and-refinement.md) and
 [invocation guide](../../references/invocation.md). Requested or required independent
-review follows the shared opposite-family rule; unknown/unavailable family or route
+review follows the shared different-family rule; unknown/unavailable family or route
 means stop and ask for help. Inline auditing remains valid when independent review
 is not required; do not add a review merely because a runner exists.
 
