@@ -12,11 +12,11 @@ Make the subject usable and correct, not stylistically unanimous. Follow the ope
 
 ## Reviewer family
 
-For requested or required independent review, select the opposite family from the **current working agent requesting the review**: Anthropic → OpenAI; OpenAI → Anthropic. Pin that requesting family and the required reviewer family in the brief. This is not a historical file-authorship check: human-written and mixed-history artifacts use the same current-agent reference.
+For requested or required independent review, select a reviewer from a different family than the **current working agent requesting the review**. Supported families are Anthropic, OpenAI and Google; when more than one other family is available, follow repository or operator preference. Pin that requesting family and the selected reviewer family in the brief. This is not a historical file-authorship check: human-written and mixed-history artifacts use the same current-agent reference.
 
 Establish both actual model families from trustworthy session/configuration information or operator confirmation. A harness, executable, role name, or cloud host such as Bedrock/Azure does not establish family. Do not invent identities or override configured models without operator authorization.
 
-If the current family is unknown/unsupported, the opposite-family reviewer is unavailable, or the selected reviewer family is unidentified/wrong, **stop the review-dependent workflow and ask for help**. Report blocked/incomplete; never silently substitute same-family review or claim required review completion while blocked.
+If the current family is unknown/unsupported, no different-family reviewer is available, or the selected reviewer family is unidentified/wrong, **stop the review-dependent workflow and ask for help**. Report blocked/incomplete; never silently substitute same-family review or claim required review completion while blocked.
 
 This rule selects reviewers; it does not add review frequency, fixed model rosters, rotation, extra rounds, or mandatory delegated writers. Inline evidence gathering and finding verification remain valid but cannot replace required independent review. An assigned reviewer performs that step only, not another reviewer-selection cycle.
 

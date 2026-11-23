@@ -35,7 +35,7 @@ The owned home for portable review, refinement, and scoped code cleanup for Pi, 
 - `auditing-redundancy` - Requested repository sweep for duplicated implementations and dead code, filed as issues or small PRs; reads an optional `docs/redundancy-audit.md` repository profile
 - `auditing-correctness` - Requested pre-release correctness audit of a subsystem: audit-first invariant candidates, property tests and formal models only where they add value, and each finding fixed as its own PR; reads an optional `docs/correctness-audit.md` repository profile
 
-The review/refinement entrypoints retain their [shared procedure](plugins/codex-tools/references/review-and-refinement.md) and [invocation guide](plugins/codex-tools/references/invocation.md). Requested or required independent review uses the opposite actual model family from the current working agent: Anthropic → OpenAI; OpenAI → Anthropic. Unknown/unsupported family or unavailable opposite reviewer means stop and ask for help, not same-family fallback. This selects reviewers; it does not add review frequency or require historical file-authorship analysis.
+The review/refinement entrypoints retain their [shared procedure](plugins/codex-tools/references/review-and-refinement.md) and [invocation guide](plugins/codex-tools/references/invocation.md). Requested or required independent review uses an actual model family different from the current working agent's, among Anthropic, OpenAI and Google, following repository or operator preference when several are available. Unknown/unsupported family or no available different-family reviewer means stop and ask for help, not same-family fallback. This selects reviewers; it does not add review frequency or require historical file-authorship analysis.
 
 `reviewing-work` additionally loads the [code/test-quality reference](plugins/codex-tools/references/code-quality.md) for code reviews, not prose-only reviews. `simplifying-code` uses the same criteria with its own explicitly requested editing scope, rather than adopting review-only permissions. It does not add an automatic pre-PR trigger. The redundancy-audit and correctness-audit workflows remain separate.
 
@@ -108,7 +108,7 @@ The checks cover resource precedence, copied/symlinked reference loading (includ
 
 ## Prerequisites
 
-Research prerequisites remain PubMed MCP, Semantic Scholar, Unpaywall, and optional ChEMBL access. Review prerequisites depend on the selected authorized mechanism and actual opposite model family, not a hardcoded model or authentication method. WSL prerequisites and handler setup are documented in its plugin README.
+Research prerequisites remain PubMed MCP, Semantic Scholar, Unpaywall, and optional ChEMBL access. Review prerequisites depend on the selected authorized mechanism and actual different model family, not a hardcoded model or authentication method. WSL prerequisites and handler setup are documented in its plugin README.
 
 ## License
 
